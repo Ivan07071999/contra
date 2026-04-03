@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "~4.2.0",
+    "@pixi/devtools": "^2.0.1",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.4.0",
     "pixi.js": "^8.17.1",
