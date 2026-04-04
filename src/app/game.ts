@@ -21,6 +21,8 @@ export class Game {
     this.hero = new Hero();
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
+    this.hero.x = 100;
+    this.hero.y = 340;
   }
 
   public async init(): Promise<void> {

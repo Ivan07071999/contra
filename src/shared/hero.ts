@@ -10,7 +10,7 @@ export class Hero extends Container {
   private movement = { x: 0, y: 0 };
   private directionContext = { left: 0, right: 0 };
   private graphic: Graphics;
-  private isGrounded = true;
+  public isGrounded = true;
 
   constructor() {
     super();
@@ -18,8 +18,11 @@ export class Hero extends Container {
     this.graphic = new Graphics()
       .rect(0, 0, 50, 100)
       .stroke({ color: 'red', width: 2 })
+      .circle(25, 50, 4)
+      .fill({ color: 'yellow' });
 
-    this.graphic.position.set(100, 340);
+    this.pivot.set(25, 50);
+
     this.addChild(this.graphic);
   }
 
@@ -55,5 +58,19 @@ export class Hero extends Container {
 
     this.velocityY -= this.JUMP_FORCE;
     this.isGrounded = false;
+  }
+
+  public lieDown(): void {
+    this.pivot.set(50, 100);
+    this.rotation = Math.PI / 2
+  }
+
+  public standUp(): void {
+    this.rotation = 0;
+  }
+
+  public jumpOff(): void {
+    this.isGrounded = false;
+    this.y += 2;
   }
 }
