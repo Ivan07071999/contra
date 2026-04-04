@@ -4,6 +4,7 @@ import { initDevtools } from '@pixi/devtools';
 import { Hero } from '../shared/hero';
 import { Playground } from '../widgets/playground';
 import { Collisions } from '../features/collisions';
+import { Controller } from '../features/controller';
 
 export class Game {
   private app: Application;
@@ -11,6 +12,7 @@ export class Game {
   private hero: Hero;
   private playground: Playground;
   private collisions: Collisions;
+  private controller: Controller;
 
   constructor() {
     this.app = new Application();
@@ -18,6 +20,7 @@ export class Game {
     this.assets = new AssetsManager();
     this.hero = new Hero();
     this.collisions = new Collisions();
+    this.controller = new Controller(this.hero)
   }
 
   public async init(): Promise<void> {
@@ -56,6 +59,7 @@ export class Game {
 
   private startLoop(): void {
     this.app.ticker.add(() => {
+      this.controller.update();
       this.update();
     });
   }

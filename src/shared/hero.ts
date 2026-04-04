@@ -1,39 +1,59 @@
 import { Container, Graphics } from 'pixi.js';
-import { Controller } from '../features/controller';
+// import { Controller } from '../features/controller';
 
 export class Hero extends Container {
   private GRAVITY_FORCE = 0.1;
-  private volocityX = 0;
+  private JUMP_FORCE = 5;
+  private SPEED = 2;
+  private velocityX = 0;
   private velocityY = 0;
+  private movement = { x: 0, y: 0 };
+  private directionContext = { left: 0, right: 0 };
   private graphic: Graphics;
-  public controller: Controller;
-  public vx = 100;
-  public vy = 340;
-  public isGrounded = true;
+  private isGrounded = true;
 
   constructor() {
     super();
 
     this.graphic = new Graphics()
-      .moveTo(50, 50)
-      .lineTo(100, 50)
-      .lineTo(100, 150)
-      .lineTo(50, 150)
-      .lineTo(50, 50)
-      .stroke({ color: 'red', pixelLine: true });
+      .rect(0, 0, 50, 100)
+      .stroke({ color: 'red', width: 2 })
 
-    this.graphic.position.set(this.vx, this.vy);
-    this.controller = new Controller();
-
+    this.graphic.position.set(100, 340);
     this.addChild(this.graphic);
   }
 
   public update(): void {
+    this.velocityX = this.movement.x * this.SPEED;
+    this.x += this.velocityX;
+
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
   }
 
   public stay(): void {
     this.velocityY = 0;
+    this.isGrounded = true;
+  }
+
+  public moveLeft(): void {
+    this.directionContext.left = -1;
+    this.movement.x = -1;
+  }
+
+  public moveRight(): void {
+    this.directionContext.right = 1;
+    this.movement.x = 1;
+  }
+
+  public stop(): void {
+    this.movement.x = 0;
+  }
+
+  public jump(): void {
+    if (!this.isGrounded) return;
+
+    this.velocityY -= this.JUMP_FORCE;
+    this.isGrounded = false;
   }
 }

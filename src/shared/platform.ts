@@ -11,7 +11,10 @@ export class Platform extends Container {
     this.width = width;
     this.height = height;
 
-    this.platform = new Graphics().rect(x, x, width, height).fill('white');
+    this.platform = new Graphics()
+      .rect(x, x, width, height)
+      .stroke({ color: 'green', width: 2 });
+
     this.bounds = new Rectangle(x, y, width, height);
 
     this.addChild(this.platform)
