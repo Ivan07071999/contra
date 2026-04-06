@@ -11,6 +11,11 @@ export class Collisions {
     const bounds1 = firstContainer.getBounds();
     const bounds2 = secondContainer.getBounds();
 
+    if (bounds1.top == bounds2.bottom ) {
+      //console.log('ударился головой');
+      return false;
+    };
+
     return (
       bounds1.x < bounds2.x + bounds2.width &&
       bounds1.x + bounds1.width > bounds2.x &&
@@ -25,7 +30,7 @@ export class Collisions {
     heroPosition: { x: number; y: number },
   ) {
     for (const platform of platforms) {
-      if (!this.checkCollision(hero, platform)) continue
+      if (!this.checkCollision(hero, platform)) continue;
 
       const currentY = hero.y;
       hero.y = heroPosition.y;

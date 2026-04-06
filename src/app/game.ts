@@ -22,7 +22,7 @@ export class Game {
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
     this.hero.x = 100;
-    this.hero.y = 340;
+    this.hero.y = 460;
   }
 
   public async init(): Promise<void> {
@@ -63,6 +63,7 @@ export class Game {
     this.app.ticker.add(() => {
       this.controller.update();
       this.update();
+      //console.log(this.hero.velocityY);
     });
   }
 }

@@ -69,7 +69,7 @@ export class Controller {
       this.hero.stop();
     }
 
-    if (this.keys.down.pressed) {
+    if (this.keys.down.pressed && (!this.keys.left.pressed && !this.keys.right.pressed)) {
       this.hero.lieDown();
     } else {
       this.hero.standUp();

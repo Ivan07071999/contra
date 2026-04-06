@@ -6,11 +6,13 @@ export class Hero extends Container {
   private JUMP_FORCE = 5;
   private SPEED = 2;
   private velocityX = 0;
-  private velocityY = 0;
+  public velocityY = 0;
   private movement = { x: 0, y: 0 };
   private directionContext = { left: 0, right: 0 };
   private graphic: Graphics;
   public isGrounded = true;
+  private isLie = false;
+  public isFlyDown = false;
 
   constructor() {
     super();
@@ -32,6 +34,7 @@ export class Hero extends Container {
 
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
+    this.flyDown();
   }
 
   public stay(): void {
@@ -40,11 +43,13 @@ export class Hero extends Container {
   }
 
   public moveLeft(): void {
+    this.isLie = false;
     this.directionContext.left = -1;
     this.movement.x = -1;
   }
 
   public moveRight(): void {
+    this.isLie = false;
     this.directionContext.right = 1;
     this.movement.x = 1;
   }
@@ -54,23 +59,41 @@ export class Hero extends Container {
   }
 
   public jump(): void {
-    if (!this.isGrounded) return;
+    console.log('Jump');
+
+    if (!this.isGrounded || this.isLie) return;
 
     this.velocityY -= this.JUMP_FORCE;
     this.isGrounded = false;
   }
 
   public lieDown(): void {
+    if (!this.isGrounded) {
+      this.standUp();
+      return;
+    };
+
     this.pivot.set(50, 100);
-    this.rotation = Math.PI / 2
+    this.rotation = Math.PI / 2;
+    this.isLie = true;
   }
 
   public standUp(): void {
+    this.isLie = false;
     this.rotation = 0;
   }
 
   public jumpOff(): void {
     this.isGrounded = false;
     this.y += 2;
+  }
+
+  public flyDown(): void {
+    if (this.velocityY > 0 && !this.isGrounded) {
+      this.isFlyDown = true;
+    } else {
+      this.isFlyDown = false;
+    }
+    //console.log(this.isFlyDown, this.velocityY);
   }
 }
