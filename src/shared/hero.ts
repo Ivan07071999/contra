@@ -18,12 +18,11 @@ export class Hero extends Container {
     super();
 
     this.graphic = new Graphics()
-      .rect(0, 0, 50, 100)
+      .rect(0, 0, 25, 50)
       .stroke({ color: 'red', width: 2 })
-      .circle(25, 50, 4)
-      .fill({ color: 'yellow' });
 
     this.pivot.set(25, 50);
+    //this.graphic.scale.set(0.5)
 
     this.addChild(this.graphic);
   }
@@ -34,6 +33,7 @@ export class Hero extends Container {
 
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
+    //console.log(this.velocityY);
     this.flyDown();
   }
 
@@ -73,7 +73,6 @@ export class Hero extends Container {
       return;
     };
 
-    this.pivot.set(50, 100);
     this.rotation = Math.PI / 2;
     this.isLie = true;
   }
@@ -94,6 +93,6 @@ export class Hero extends Container {
     } else {
       this.isFlyDown = false;
     }
-    //console.log(this.isFlyDown, this.velocityY);
+    //console.log(this.isFlyDown, this.isGrounded);
   }
 }

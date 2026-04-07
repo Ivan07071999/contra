@@ -1,5 +1,4 @@
 import { Application } from 'pixi.js';
-import { AssetsManager } from '../shared/assets';
 import { initDevtools } from '@pixi/devtools';
 import { Hero } from '../shared/hero';
 import { Playground } from '../widgets/playground';
@@ -8,7 +7,6 @@ import { Controller } from '../features/controller';
 
 export class Game {
   private app: Application;
-  private assets: AssetsManager;
   private hero: Hero;
   private playground: Playground;
   private collisions: Collisions;
@@ -17,31 +15,25 @@ export class Game {
   constructor() {
     this.app = new Application();
     this.playground = new Playground();
-    this.assets = new AssetsManager();
     this.hero = new Hero();
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
-    this.hero.x = 100;
-    this.hero.y = 460;
+    this.hero.x = 200;
+    this.hero.y = 100;
   }
 
   public async init(): Promise<void> {
     await this.app.init({
+      width: 800,
+      height: 600,
       background: '#000000',
-      resizeTo: window,
       antialias: true,
     });
-
-    await this.assets.load();
 
     await initDevtools(this.app);
 
     const container = document.querySelector('#app');
     container?.appendChild(this.app.canvas);
-
-    // const sheet = await Assets.load('/public/atlas.json');
-    // const texture = sheet.textures['boss0000'];
-    // const boss = new Sprite(texture);
 
     this.playground.view.addChild(this.hero)
     this.app.stage.addChild(this.playground.view);
@@ -56,14 +48,21 @@ export class Game {
 
     this.hero.update();
 
+    if (this.hero.y > this.app.screen.height) this.hero.y = this.app.screen.height;
+
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
+  }
+
+  updateCamera(): void {
+    this.playground.position = -this.hero.x + 200;
   }
 
   private startLoop(): void {
     this.app.ticker.add(() => {
       this.controller.update();
       this.update();
-      //console.log(this.hero.velocityY);
+      this.updateCamera()
+
     });
   }
 }

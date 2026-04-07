@@ -11,12 +11,8 @@ export class AssetsManager {
   public async load(): Promise<void> {
     if (this.initialized) return;
 
-    await Assets.load({
-      alias: 'myAtlas',
-      src: '/public/atlas.json',
-    });
+    await Assets.load('/public/atlas.json');
 
     this.initialized = true;
-    console.log('Загрузили асеты');
   }
 }
