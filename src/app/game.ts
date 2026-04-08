@@ -4,10 +4,12 @@ import { Hero } from '../shared/hero';
 import { Playground } from '../widgets/playground';
 import { Collisions } from '../features/collisions';
 import { Controller } from '../features/controller';
+import { Background } from '../widgets/background';
 
 export class Game {
   private app: Application;
   private hero: Hero;
+  private background!: Background;
   private playground: Playground;
   private collisions: Collisions;
   private controller: Controller;
@@ -34,9 +36,10 @@ export class Game {
 
     const container = document.querySelector('#app');
     container?.appendChild(this.app.canvas);
+    this.background = new Background(this.app);
 
     this.playground.view.addChild(this.hero)
-    this.app.stage.addChild(this.playground.view);
+    this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
   }
 
@@ -54,15 +57,17 @@ export class Game {
   }
 
   updateCamera(): void {
-    this.playground.position = -this.hero.x + 200;
+    const heroPosition = -this.hero.x + 200;
+    this.playground.position = heroPosition;
+    this.background.position = heroPosition;
+    // this.playground.position = -2500
   }
 
   private startLoop(): void {
     this.app.ticker.add(() => {
       this.controller.update();
       this.update();
-      this.updateCamera()
-
+      this.updateCamera();
     });
   }
 }
