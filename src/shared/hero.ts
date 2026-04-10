@@ -6,14 +6,16 @@ export class Hero extends Container {
   private heroAnimations: HeroAnimations;
   private hero: Sprite | AnimatedSprite;
   private GRAVITY_FORCE = 0.1;
-  private JUMP_FORCE = 5;
+  private JUMP_FORCE = 5.5;
   private SPEED = 2;
   private velocityX = 0;
   public velocityY = 0;
   private movement = { x: 0, y: 0 };
-  private directionContext = { left: 0, right: 0 };
   public isGrounded = false;
   private isLie = false;
+  public runUp = false;
+  public runDown = false;
+  public stayUp = false;
   public isFlyDown = false;
   private currentAnimateState = 'stay';
 
@@ -52,6 +54,15 @@ export class Hero extends Container {
       case 'jump':
         this.hero = this.heroAnimations.jumpAnimation();
         break;
+      case 'runUp':
+        this.hero = this.heroAnimations.runUpAnimation();
+        break;
+      case 'runDown':
+        this.hero = this.heroAnimations.runDownAnimation();
+        break;
+      case 'stayUp':
+        this.hero = this.heroAnimations.stayUpAnimation();
+        break;
       default:
         this.hero = this.heroAnimations.stayAnimation();
     }
@@ -70,35 +81,28 @@ export class Hero extends Container {
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
     this.flyDown();
+    this.updateAnimations();
   }
 
   public stay(): void {
     this.velocityY = 0;
     this.isGrounded = true;
-    this.setAnimation('stay');
   }
 
   public moveLeft(): void {
     this.isLie = false;
-    this.directionContext.left = -1;
     this.movement.x = -1;
-    if (this.isGrounded) {
-      this.setAnimation('run');
-    };
+    this.scale.x = -0.7;
   }
 
   public moveRight(): void {
     this.isLie = false;
-    this.directionContext.right = 1;
     this.movement.x = 1;
-    if (this.isGrounded) {
-      this.setAnimation('run');
-    }
+    this.scale.x = 0.7;
   }
 
   public stop(): void {
     this.movement.x = 0;
-    //this.setAnimation('stay');
   }
 
   public jump(): void {
@@ -106,7 +110,6 @@ export class Hero extends Container {
 
     this.velocityY -= this.JUMP_FORCE;
     this.isGrounded = false;
-    this.setAnimation('jump');
   }
 
   public lieDown(): void {
@@ -116,17 +119,39 @@ export class Hero extends Container {
     };
 
     this.isLie = true;
-    this.setAnimation('lay')
+    this.movement.x = 0;
   }
 
   public standUp(): void {
     this.isLie = false;
-    this.setAnimation('stay')
   }
 
   public jumpOff(): void {
+    if (!this.isGrounded) return;
     this.isGrounded = false;
     this.y += 2;
+  }
+
+  private updateAnimations(): void {
+    let state = 'stay';
+
+    if (this.isLie) {
+      state = 'lay';
+    } else if (!this.isGrounded) {
+      state = 'jump';
+    } else if (this.runUp) {
+      state = 'runUp';
+    } else if (this.runDown) {
+      state = 'runDown';
+    } else if (this.movement.x !== 0) {
+      state = 'run';
+    } else if (this.stayUp) {
+      state = 'stayUp';
+    } else {
+      state = 'stay';
+    }
+
+    this.setAnimation(state);
   }
 
   public flyDown(): void {

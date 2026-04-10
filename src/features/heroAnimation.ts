@@ -36,6 +36,24 @@ export class HeroAnimations {
     animation.animationSpeed = 0.1;
     animation.play();
 
-    return animation
+    return animation;
+  }
+
+  public runUpAnimation(): AnimatedSprite {
+    const frames = this.atlasData.animations.runup as Texture[];
+    const animations = new AnimatedSprite(frames);
+    animations.animationSpeed = 0.1;
+    animations.play();
+
+    return animations;
+  }
+
+  public runDownAnimation(): AnimatedSprite {
+    const frames = this.atlasData.animations.rundown as Texture[];
+    const animations = new AnimatedSprite(frames);
+    animations.animationSpeed = 0.1;
+    animations.play();
+
+    return animations;
   }
 }

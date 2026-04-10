@@ -59,6 +59,15 @@ export class Controller {
   }
 
   public update() {
+    if (this.keys.up.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
+      this.hero.runUp = true;
+    } else if (this.keys.down.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
+      this.hero.runDown = true;
+    } else {
+      this.hero.runDown = false;
+      this.hero.runUp = false;
+    }
+
     if (this.keys.left.pressed) {
       this.hero.moveLeft();
     } else if (this.keys.right.pressed) {
@@ -67,7 +76,13 @@ export class Controller {
       this.hero.stop();
     }
 
-    if (this.keys.down.pressed && (!this.keys.left.pressed && !this.keys.right.pressed)) {
+    if (this.keys.up.pressed) {
+      this.hero.stayUp = true;
+    } else {
+      this.hero.stayUp = false;
+    }
+
+    if (this.keys.down.pressed && !this.keys.left.pressed && !this.keys.right.pressed) {
       this.hero.lieDown();
     } else {
       this.hero.standUp();

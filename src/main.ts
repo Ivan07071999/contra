@@ -6,10 +6,7 @@ void (async () => {
   const assets = new AssetsManager();
   await assets.load();
 
-  if (!assets.atlasData) {
-    console.error('Атлас не загрузился!');
-    return;
-  }
+  if (!assets.atlasData) return;
 
   const game = new Game(assets.atlasData);
   await game.init();

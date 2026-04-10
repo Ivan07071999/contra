@@ -20,7 +20,7 @@ export class Game {
     this.app = new Application();
     this.atlasData = atlasData;
     this.playground = new Playground();
-    this.hero = new Hero(atlasData);
+    this.hero = new Hero(this.atlasData);
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
     this.hero.x = 200;
