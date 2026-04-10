@@ -1,19 +1,22 @@
 
-import { Container, Texture, TilingSprite } from 'pixi.js';
+import { Container, Sprite, Texture, TilingSprite } from 'pixi.js';
 import platforms from '../../src/shared/platforms.json';
 import { Platform } from '../shared/platform';
 
 export class Playground {
   public view: Container;
+  private bossContainer: Container;
   public platforms: Platform[] = [];
 
   constructor() {
     this.view = new Container();
-    this.addJungle();
+    this.bossContainer = new Container();
+    //this.addJungle();
     this.createPlatforms();
     this.addWater();
     this.addBridge(1650);
     this.addBridge(2250);
+    this.addBoss();
   }
 
   private createPlatforms(): void {
@@ -22,6 +25,34 @@ export class Playground {
       this.view.addChild(item);
       this.platforms.push(item)
     }
+  }
+
+  private addBoss(): void {
+    const bossTexture = Texture.from('boss0000');
+    const bossDoorTexture = Texture.from('bossdoor0001');
+    const bossGunTexture = Texture.from('bossgun0000');
+
+    const bossGun = new Sprite(bossGunTexture);
+    const bossGun2 = new Sprite(bossGunTexture);
+    const bossDoor = new Sprite(bossDoorTexture)
+    const bossSprite = new Sprite(bossTexture);
+
+    bossSprite.scale.set(0.7);
+    bossDoor.scale.set(0.7);
+    bossGun.scale.set(0.7);
+    bossGun2.scale.set(0.7);
+
+    bossGun.y = 140;
+    bossGun2.y = 140;
+    bossGun2.x = 35;
+    bossDoor.x = 15;
+    bossDoor.y = 200;
+
+    this.bossContainer.scale.set(1.2)
+
+    this.bossContainer.position.set(5820, 220);
+    this.bossContainer.addChild(bossSprite, bossDoor, bossGun, bossGun2);
+    this.view.addChild(this.bossContainer);
   }
 
   private addWater(): void {
@@ -52,32 +83,6 @@ export class Playground {
     tilingSprite.y = 348;
 
     this.view.addChild(tilingSprite);
-  }
-
-  private addJungle(): void {
-    const jungleTopTexture = Texture.from('jungletop0000');
-    const jungleBottomTexture = Texture.from('junglebottom0000');
-
-    const jungleTopTilingSprite = new TilingSprite({
-      texture: jungleTopTexture,
-      width: 5850 - 2895,
-      height: jungleTopTexture.height / 2,
-      tileScale: { x: 0.5, y: 0.5 },
-    });
-
-    const jungleBottomTilingSprite = new TilingSprite({
-      texture: jungleBottomTexture,
-      width: 5850 - 2895,
-      height: 600 - jungleBottomTexture.height / 2,
-      tileScale: { x: 0.5, y: 0.5 },
-    });
-
-    jungleBottomTilingSprite.y = jungleTopTexture.height / 2;
-
-    jungleTopTilingSprite.x = 2895;
-    jungleBottomTilingSprite.x = 2895;
-
-    this.view.addChild(jungleTopTilingSprite, jungleBottomTilingSprite);
   }
 
   public get position(): number {

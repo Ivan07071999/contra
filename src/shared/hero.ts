@@ -1,7 +1,10 @@
-import { Container, Graphics } from 'pixi.js';
-// import { Controller } from '../features/controller';
+import { AnimatedSprite, Container, Sprite, Texture } from 'pixi.js';
+import { HeroAnimations } from '../features/heroAnimation';
+import type { ISpriteAtlas } from './types';
 
 export class Hero extends Container {
+  private heroAnimations: HeroAnimations;
+  private hero: Sprite | AnimatedSprite;
   private GRAVITY_FORCE = 0.1;
   private JUMP_FORCE = 5;
   private SPEED = 2;
@@ -9,22 +12,55 @@ export class Hero extends Container {
   public velocityY = 0;
   private movement = { x: 0, y: 0 };
   private directionContext = { left: 0, right: 0 };
-  private graphic: Graphics;
-  public isGrounded = true;
+  public isGrounded = false;
   private isLie = false;
   public isFlyDown = false;
+  private currentAnimateState = 'stay';
 
-  constructor() {
+  constructor(atlasData: ISpriteAtlas) {
     super();
 
-    this.graphic = new Graphics()
-      .rect(0, 0, 25, 50)
-      .stroke({ color: 'red', width: 2 })
+    this.heroAnimations = new HeroAnimations(atlasData);
+    this.hero = new Sprite(Texture.WHITE);
+    this.setAnimation('jump');
 
-    this.pivot.set(25, 50);
-    //this.graphic.scale.set(0.5)
+    this.addChild(this.hero);
+    this.scale.set(0.7);
+  }
 
-    this.addChild(this.graphic);
+  private setAnimation(state: string): void {
+    if (this.currentAnimateState === state) return;
+
+    this.currentAnimateState = state;
+
+    this.removeChild(this.hero);
+
+    if (this.hero instanceof AnimatedSprite) {
+      this.hero.stop();
+    }
+
+    switch (state) {
+      case 'stay':
+        this.hero = this.heroAnimations.stayAnimation();
+        break;
+      case 'lay':
+        this.hero = this.heroAnimations.layAnimation();
+        break;
+      case 'run':
+        this.hero = this.heroAnimations.moveAnimation();
+        break;
+      case 'jump':
+        this.hero = this.heroAnimations.jumpAnimation();
+        break;
+      default:
+        this.hero = this.heroAnimations.stayAnimation();
+    }
+
+    this.hero.anchor.set(0.5, 1);
+    this.hero.position.set(0, 0);
+    this.addChild(this.hero);
+
+    console.log(this.currentAnimateState);
   }
 
   public update(): void {
@@ -33,38 +69,44 @@ export class Hero extends Container {
 
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
-    //console.log(this.velocityY);
     this.flyDown();
   }
 
   public stay(): void {
     this.velocityY = 0;
     this.isGrounded = true;
+    this.setAnimation('stay');
   }
 
   public moveLeft(): void {
     this.isLie = false;
     this.directionContext.left = -1;
     this.movement.x = -1;
+    if (this.isGrounded) {
+      this.setAnimation('run');
+    };
   }
 
   public moveRight(): void {
     this.isLie = false;
     this.directionContext.right = 1;
     this.movement.x = 1;
+    if (this.isGrounded) {
+      this.setAnimation('run');
+    }
   }
 
   public stop(): void {
     this.movement.x = 0;
+    //this.setAnimation('stay');
   }
 
   public jump(): void {
-    console.log('Jump');
-
     if (!this.isGrounded || this.isLie) return;
 
     this.velocityY -= this.JUMP_FORCE;
     this.isGrounded = false;
+    this.setAnimation('jump');
   }
 
   public lieDown(): void {
@@ -73,13 +115,13 @@ export class Hero extends Container {
       return;
     };
 
-    this.rotation = Math.PI / 2;
     this.isLie = true;
+    this.setAnimation('lay')
   }
 
   public standUp(): void {
     this.isLie = false;
-    this.rotation = 0;
+    this.setAnimation('stay')
   }
 
   public jumpOff(): void {
@@ -93,6 +135,5 @@ export class Hero extends Container {
     } else {
       this.isFlyDown = false;
     }
-    //console.log(this.isFlyDown, this.isGrounded);
   }
 }

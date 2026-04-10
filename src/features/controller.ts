@@ -48,7 +48,6 @@ export class Controller {
     if (!key) return;
 
     this.keys[key].pressed = true;
-    // console.log('Нажали:', key);
   }
 
   private handleKeyUp(event: KeyboardEvent): void {
@@ -57,7 +56,6 @@ export class Controller {
     if (!key) return;
 
     this.keys[key].pressed = false;
-    // console.log('Отпустили:', key);
   }
 
   public update() {

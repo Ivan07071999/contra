@@ -5,19 +5,22 @@ import { Playground } from '../widgets/playground';
 import { Collisions } from '../features/collisions';
 import { Controller } from '../features/controller';
 import { Background } from '../widgets/background';
+import type { ISpriteAtlas } from '../shared/types';
 
 export class Game {
   private app: Application;
   private hero: Hero;
+  private atlasData: ISpriteAtlas;
   private background!: Background;
   private playground: Playground;
   private collisions: Collisions;
   private controller: Controller;
 
-  constructor() {
+  constructor(atlasData: ISpriteAtlas) {
     this.app = new Application();
+    this.atlasData = atlasData;
     this.playground = new Playground();
-    this.hero = new Hero();
+    this.hero = new Hero(atlasData);
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
     this.hero.x = 200;
@@ -57,10 +60,10 @@ export class Game {
   }
 
   updateCamera(): void {
+    //const heroPosition = -5500
     const heroPosition = -this.hero.x + 200;
     this.playground.position = heroPosition;
     this.background.position = heroPosition;
-    // this.playground.position = -2500
   }
 
   private startLoop(): void {
