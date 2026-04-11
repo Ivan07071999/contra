@@ -11,7 +11,7 @@ export class Box extends Container {
     this.y = y;
 
     this.graphics = new Graphics()
-      .setStrokeStyle({ width: 1, color: 'red' })
+      .setStrokeStyle({ width: 0, color: 'white' })
       .rect(0, 0, width, height)
       .stroke();
 

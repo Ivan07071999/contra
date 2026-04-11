@@ -76,6 +76,7 @@ export class Playground {
     });
 
     tilingSprite.y = 600 - texture.height;
+    tilingSprite.zIndex = 1;
 
     this.view.addChild(tilingSprite);
   }

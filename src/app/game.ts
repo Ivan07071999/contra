@@ -54,10 +54,14 @@ export class Game {
 
     this.hero.update();
 
-    if (this.hero.y > this.app.screen.height) this.hero.y = this.app.screen.height;
+    if (this.hero.y > this.app.screen.height) {
+      this.hero.y = this.app.screen.height;
+      this.hero.swimming();
+    };
 
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.boxes);
+    // console.log(this.hero.isSwimming);
   }
 
   updateCamera(): void {

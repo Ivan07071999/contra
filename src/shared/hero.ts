@@ -81,10 +81,16 @@ export class Hero extends Container {
     this.y += this.velocityY;
     this.flyDown();
     this.updateAnimations();
+    this.isSwimming = false;
   }
 
   public stay(): void {
     this.velocityY = 0;
+    this.isGrounded = true;
+  }
+
+  public swimming(): void {
+    this.isSwimming = true;
     this.isGrounded = true;
   }
 
@@ -112,7 +118,7 @@ export class Hero extends Container {
   }
 
   public lieDown(): void {
-    if (!this.isGrounded) {
+    if (!this.isGrounded || this.isSwimming) {
       this.standUp();
       return;
     };
@@ -126,7 +132,7 @@ export class Hero extends Container {
   }
 
   public jumpOff(): void {
-    if (!this.isGrounded) return;
+    if (!this.isGrounded || this.isSwimming) return;
     this.isGrounded = false;
     this.y += 2;
   }
