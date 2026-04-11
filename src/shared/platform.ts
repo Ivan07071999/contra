@@ -14,38 +14,26 @@ export class Platform extends Container {
     this.platformTexture = Texture.from('platform0000');
     this.groundTexture = Texture.from('ground0000');
 
-    //this.platformTexture.source.style.addressMode = 'repeat';
+    this.platformTexture.source.style.addressMode = 'repeat';
     this.platformTexture.source.style.scaleMode = 'nearest';
-    //this.groundTexture.source.style.addressMode = 'repeat';
+    this.groundTexture.source.style.addressMode = 'repeat';
     this.groundTexture.source.style.scaleMode = 'nearest';
-
-    const platformFrame = this.platformTexture.frame;
-    platformFrame.x += 0.5;
-    platformFrame.y += 0.5;
-    platformFrame.width -= 1;
-    platformFrame.height -= 1;
-
-    // const groundFrame = this.groundTexture.frame;
-    // groundFrame.x += 1;
-    // groundFrame.y += 1;
-    // groundFrame.width -= 1;
-    // groundFrame.height -= 1;
 
     this.platform = new TilingSprite({
       texture: this.platformTexture,
       width: width,
-      height: height,
+      height: this.platformTexture.height / 2,
+      tileScale: { x: 0.5, y: 0.5 },
     });
 
     this.ground = new TilingSprite({
       texture: this.groundTexture,
       width: width,
-      height: 600 - (y + this.platform.height)
+      height: 600 - (y + this.platform.height),
+      tileScale: { x: 0.5, y: 0.5 },
     });
 
-    this.platform.tileScale.set(0.3);
-    this.ground.tileScale.set(0.3);
-    this.ground.y = this.platform.height - 1;
+    this.ground.y = this.platform.height;
 
     this.bounds = new Rectangle(x, y, width, height);
 

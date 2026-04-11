@@ -17,6 +17,7 @@ export class Hero extends Container {
   public runDown = false;
   public stayUp = false;
   public isFlyDown = false;
+  public isSwimming = false;
   private currentAnimateState = 'stay';
 
   constructor(atlasData: ISpriteAtlas) {
@@ -70,8 +71,6 @@ export class Hero extends Container {
     this.hero.anchor.set(0.5, 1);
     this.hero.position.set(0, 0);
     this.addChild(this.hero);
-
-    console.log(this.currentAnimateState);
   }
 
   public update(): void {
@@ -106,7 +105,7 @@ export class Hero extends Container {
   }
 
   public jump(): void {
-    if (!this.isGrounded || this.isLie) return;
+    if (!this.isGrounded || this.isLie || this.isSwimming) return;
 
     this.velocityY -= this.JUMP_FORCE;
     this.isGrounded = false;

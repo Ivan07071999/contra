@@ -57,6 +57,7 @@ export class Game {
     if (this.hero.y > this.app.screen.height) this.hero.y = this.app.screen.height;
 
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
+    this.collisions.resolveBoxesCollisions(this.hero, this.playground.boxes);
   }
 
   updateCamera(): void {

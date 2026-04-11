@@ -15,6 +15,7 @@ export interface IMountain {
 export interface ILevelData {
   data: IPlatform[];
   mountains: IMountain[];
+  boxes: IPlatform[];
 }
 
 interface IRect {
@@ -50,3 +51,4 @@ export interface ISpriteAtlas {
   meta: IMeta;
   animations: IAnimations;
 }
+

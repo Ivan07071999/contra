@@ -1,9 +1,9 @@
 import type { Container, Rectangle } from 'pixi.js';
 import type { Platform } from '../shared/platform';
+import type { Box } from '../shared/box';
 import { Hero } from '../shared/hero';
 
 export class Collisions {
-
   public checkCollision(
     firstContainer: Rectangle | Container,
     secondContainer: Rectangle | Container,
@@ -23,8 +23,7 @@ export class Collisions {
     hero: Hero,
     platforms: Platform[] = [],
     heroPosition: { x: number; y: number },
-  ) {
-
+  ): void {
     if (!hero.isGrounded && !hero.isFlyDown) return;
 
     for (const platform of platforms) {
@@ -34,13 +33,25 @@ export class Collisions {
       hero.y = heroPosition.y;
 
       if (!this.checkCollision(hero, platform)) {
-
         hero.stay();
         continue;
-      };
+      }
 
       hero.y = currentY;
       //hero.x = heroPosition.x;
+    }
+  }
+
+  public resolveBoxesCollisions(hero: Hero, boxes: Box[] = []): void {
+    for (const box of boxes) {
+      if (this.checkCollision(hero, box)) {
+
+        hero.y = box.y;
+        //hero.isSwimming = true;
+        hero.stay();
+        //console.log('Коллизия');
+      }
+
     }
   }
 }
