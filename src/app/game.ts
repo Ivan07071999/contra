@@ -1,11 +1,11 @@
 import { Application } from 'pixi.js';
 import { initDevtools } from '@pixi/devtools';
-import { Hero } from '../shared/hero';
 import { Playground } from '../widgets/playground';
 import { Collisions } from '../features/collisions';
 import { Controller } from '../features/controller';
 import { Background } from '../widgets/background';
 import type { ISpriteAtlas } from '../shared/types';
+import { Hero } from '../entities/hero';
 
 export class Game {
   private app: Application;
@@ -19,8 +19,8 @@ export class Game {
   constructor(atlasData: ISpriteAtlas) {
     this.app = new Application();
     this.atlasData = atlasData;
-    this.playground = new Playground();
     this.hero = new Hero(this.atlasData);
+    this.playground = new Playground(this.atlasData, this.hero);
     this.collisions = new Collisions();
     this.controller = new Controller(this.hero)
     this.hero.x = 200;
@@ -53,6 +53,7 @@ export class Game {
     }
 
     this.hero.update();
+    this.playground.update(this.hero);
 
     if (this.hero.y > this.app.screen.height) {
       this.hero.y = this.app.screen.height;
@@ -61,12 +62,17 @@ export class Game {
 
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.boxes);
+    this.collisions.resolveBoxesCollisions(this.hero, this.playground.bridges);
+    this.collisions.resolveBoxesCollisions(this.hero, this.playground.secondBridges);
     // console.log(this.hero.isSwimming);
   }
 
   updateCamera(): void {
-    //const heroPosition = -5500
+    //const heroPosition = -2500
     const heroPosition = -this.hero.x + 200;
+
+    if (heroPosition > 0) return;
+
     this.playground.position = heroPosition;
     this.background.position = heroPosition;
   }

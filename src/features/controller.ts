@@ -1,4 +1,4 @@
-import type { Hero } from "../shared/hero";
+import type { Hero } from "../entities/hero";
 
 interface IKeys {
   up: { pressed: boolean };

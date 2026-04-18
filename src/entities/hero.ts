@@ -1,6 +1,6 @@
 import { AnimatedSprite, Container, Sprite, Texture } from 'pixi.js';
 import { HeroAnimations } from '../features/heroAnimation';
-import type { ISpriteAtlas } from './types';
+import type { ISpriteAtlas } from '../shared/types';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;

@@ -22,7 +22,6 @@ export class HeroAnimations {
 
   public moveAnimation(): AnimatedSprite {
     const frames = this.atlasData.animations.run as Texture[];
-
     const animation = new AnimatedSprite(frames);
     animation.animationSpeed = 0.1;
     animation.play();

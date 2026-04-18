@@ -1,7 +1,8 @@
 import type { Container, Rectangle } from 'pixi.js';
 import type { Platform } from '../shared/platform';
 import type { Box } from '../shared/box';
-import { Hero } from '../shared/hero';
+import { Hero } from '../entities/hero';
+import { Bridge } from '../shared/bridgeSegment';
 
 export class Collisions {
   public checkCollision(
@@ -42,16 +43,14 @@ export class Collisions {
     }
   }
 
-  public resolveBoxesCollisions(hero: Hero, boxes: Box[] = []): void {
+  public resolveBoxesCollisions(hero: Hero, boxes: Box[] | Bridge[] = []): void {
     for (const box of boxes) {
       if (this.checkCollision(hero, box)) {
-
         hero.y = box.y;
         //hero.isSwimming = true;
         hero.stay();
         //console.log('Коллизия');
       }
-
     }
   }
 }

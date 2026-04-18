@@ -3,22 +3,44 @@ import { Container, Sprite, Texture, TilingSprite } from 'pixi.js';
 import platforms from '../../src/shared/platforms.json';
 import { Platform } from '../shared/platform';
 import { Box } from '../shared/box';
+import { Bridge } from '../shared/bridgeSegment';
+import type { ISpriteAtlas } from '../shared/types';
+import type { Hero } from '../entities/hero';
+import { PlaygroundAnimations } from '../features/playgroundAnimations';
 
 export class Playground {
   public view: Container;
   private bossContainer: Container;
+  private bridgeContainer: Container;
+  private secondBridgeContainer: Container;
   public platforms: Platform[] = [];
   public boxes: Box[] = [];
+  public bridges: Bridge[] = [];
+  public secondBridges: Bridge[] = [];
+  private bridgesPosition: {
+    first: { position: number, hasExploded: boolean };
+    second: { position: number, hasExploded: boolean };
+  };
+  public hasExploded = false;
+  private playgroundAnimations: PlaygroundAnimations;
 
-  constructor() {
+  constructor(atlasData: ISpriteAtlas, hero: Hero) {
     this.view = new Container();
     this.bossContainer = new Container();
+    this.bridgeContainer = new Container();
+    this.secondBridgeContainer = new Container();
+    this.playgroundAnimations = new PlaygroundAnimations(atlasData);
+    this.bridgesPosition = {
+      first: { position: 1650, hasExploded: false },
+      second: { position: 2270, hasExploded: false },
+    };
+
     this.createPlatforms();
     this.addWater();
-    this.addBridge(1650);
-    this.addBridge(2250);
+    this.createBridge();
     this.addBoss();
     this.createBoxes();
+    this.update(hero);
   }
 
   private createPlatforms(): void {
@@ -81,20 +103,47 @@ export class Playground {
     this.view.addChild(tilingSprite);
   }
 
-  private addBridge(x: number): void {
-    const texture = Texture.from('bridge0000');
-    const tilingSprite = new TilingSprite({
-      texture: texture,
-      width: 600,
-      height: texture.height,
-    });
+  private createBridge(): void {
+    for (const segment of platforms.bridge) {
+      const item = new Bridge(segment.x, segment.y, this.playgroundAnimations);
+      this.bridgeContainer.addChild(item);
+      this.bridges.push(item);
 
-    tilingSprite.scale.set(0.5);
+      const item2 = new Bridge(segment.x, segment.y, this.playgroundAnimations);
+      this.secondBridgeContainer.addChild(item2);
+      this.secondBridges.push(item2);
+    }
 
-    tilingSprite.x = x;
-    tilingSprite.y = 348;
+    this.bridgeContainer.x = this.bridgesPosition.first.position;
+    this.secondBridgeContainer.x = this.bridgesPosition.second.position;
 
-    this.view.addChild(tilingSprite);
+    this.view.addChild(this.bridgeContainer, this.secondBridgeContainer);
+  }
+
+  public update(hero: Hero): void {
+    if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
+      console.log('boom 1');
+
+      this.bridges.forEach((segment, interval) => {
+        setTimeout(() => {
+          segment.blowUpSegment();
+        }, interval * 500);
+      });
+
+      this.bridgesPosition.first.hasExploded = true;
+    }
+
+    if (!this.bridgesPosition.second.hasExploded && hero.x >= this.bridgesPosition.second.position) {
+      console.log('boom 2');
+
+      this.secondBridges.forEach((segment, interval) => {
+        setTimeout(() => {
+          segment.blowUpSegment();
+        }, interval * 500);
+      });
+
+      this.bridgesPosition.second.hasExploded = true;
+    }
   }
 
   public get position(): number {
