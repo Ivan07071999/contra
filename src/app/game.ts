@@ -68,7 +68,7 @@ export class Game {
   }
 
   updateCamera(): void {
-    //const heroPosition = -2500
+    //const heroPosition = -6500
     const heroPosition = -this.hero.x + 200;
 
     if (heroPosition > 0) return;

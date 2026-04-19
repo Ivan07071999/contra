@@ -41,14 +41,14 @@ export class Background {
 
     const jungleTopTilingSprite = new TilingSprite({
       texture: jungleTopTexture,
-      width: 5850 - 2895,
+      width: 6910 - 2895,
       height: jungleTopTexture.height / 2,
       tileScale: { x: 0.5, y: 0.5 },
     });
 
     const jungleBottomTilingSprite = new TilingSprite({
       texture: jungleBottomTexture,
-      width: 5850 - 2895,
+      width: 6910 - 2895,
       height: 600 - jungleBottomTexture.height / 2,
       tileScale: { x: 0.5, y: 0.5 },
     });

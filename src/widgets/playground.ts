@@ -32,7 +32,7 @@ export class Playground {
     this.playgroundAnimations = new PlaygroundAnimations(atlasData);
     this.bridgesPosition = {
       first: { position: 1620, hasExploded: false },
-      second: { position: 2270, hasExploded: false },
+      second: { position: 2260, hasExploded: false },
     };
 
     this.createPlatforms();
@@ -80,9 +80,9 @@ export class Playground {
     bossDoor.x = 15;
     bossDoor.y = 200;
 
-    this.bossContainer.scale.set(1.2);
+    this.bossContainer.scale.set(1.3);
 
-    this.bossContainer.position.set(5820, 220);
+    this.bossContainer.position.set(6910, 180);
     this.bossContainer.addChild(bossSprite, bossDoor, bossGun, bossGun2);
     this.view.addChild(this.bossContainer);
   }
@@ -93,7 +93,7 @@ export class Playground {
 
     const tilingSprite = new TilingSprite({
       texture: texture,
-      width: 3500,
+      width: 3550,
       height: texture.height,
     });
 
