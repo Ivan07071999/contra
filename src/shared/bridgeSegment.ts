@@ -26,8 +26,6 @@ export class Bridge extends Container {
     this.removeChild(this.sprite);
 
     const explosion = this.animation.explosionAnimation();
-    explosion.anchor.set(0.5);
-    explosion.scale.set(1.5);
 
     explosion.onComplete = () => {
       this.removeChild(explosion);

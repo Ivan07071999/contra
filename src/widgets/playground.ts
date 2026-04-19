@@ -31,7 +31,7 @@ export class Playground {
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData);
     this.bridgesPosition = {
-      first: { position: 1650, hasExploded: false },
+      first: { position: 1620, hasExploded: false },
       second: { position: 2270, hasExploded: false },
     };
 
