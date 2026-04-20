@@ -7,6 +7,8 @@ import { Bridge } from '../shared/bridgeSegment';
 import type { ISpriteAtlas } from '../shared/types';
 import type { Hero } from '../entities/hero';
 import { PlaygroundAnimations } from '../features/playgroundAnimations';
+import type { Bullet } from '../shared/bullets/bullet';
+import { BulletFactory } from '../shared/bullets/bulletFactory';
 
 export class Playground {
   public view: Container;
@@ -18,16 +20,21 @@ export class Playground {
   public bridges: Bridge[] = [];
   public secondBridges: Bridge[] = [];
   private bridgesPosition: {
-    first: { position: number, hasExploded: boolean };
-    second: { position: number, hasExploded: boolean };
+    first: { position: number; hasExploded: boolean };
+    second: { position: number; hasExploded: boolean };
   };
   public hasExploded = false;
   private playgroundAnimations: PlaygroundAnimations;
+  public bullets: Bullet[] = [];
+  private bulletFactory: BulletFactory;
+  private hero: Hero;
 
   constructor(atlasData: ISpriteAtlas, hero: Hero) {
     this.view = new Container();
     this.bossContainer = new Container();
     this.bridgeContainer = new Container();
+    this.hero = hero;
+    this.bulletFactory = new BulletFactory();
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData);
     this.bridgesPosition = {
@@ -42,6 +49,12 @@ export class Playground {
     this.createBoxes();
     this.update(hero);
   }
+
+  public createBullet = (): void => {
+    const bullet = this.bulletFactory.createBullet(this.hero.x, this.hero.y);
+    this.view.addChild(bullet);
+    this.bullets.push(bullet);
+  };
 
   private createPlatforms(): void {
     for (const platform of platforms.data) {
@@ -121,6 +134,10 @@ export class Playground {
   }
 
   public update(hero: Hero): void {
+    for (const bullet of this.bullets) {
+      bullet.update();
+    }
+
     if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
       console.log('boom 1');
 
@@ -133,7 +150,10 @@ export class Playground {
       this.bridgesPosition.first.hasExploded = true;
     }
 
-    if (!this.bridgesPosition.second.hasExploded && hero.x >= this.bridgesPosition.second.position) {
+    if (
+      !this.bridgesPosition.second.hasExploded &&
+      hero.x >= this.bridgesPosition.second.position
+    ) {
       console.log('boom 2');
 
       this.secondBridges.forEach((segment, interval) => {

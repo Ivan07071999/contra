@@ -22,7 +22,7 @@ export class Game {
     this.hero = new Hero(this.atlasData);
     this.playground = new Playground(this.atlasData, this.hero);
     this.collisions = new Collisions();
-    this.controller = new Controller(this.hero)
+    this.controller = new Controller(this.hero, this.playground.createBullet);
     this.hero.x = 200;
     this.hero.y = 100;
   }
@@ -41,7 +41,7 @@ export class Game {
     container?.appendChild(this.app.canvas);
     this.background = new Background(this.app);
 
-    this.playground.view.addChild(this.hero)
+    this.playground.view.addChild(this.hero);
     this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
   }
@@ -50,7 +50,7 @@ export class Game {
     const prevPoint = {
       x: this.hero.x,
       y: this.hero.y,
-    }
+    };
 
     this.hero.update();
     this.playground.update(this.hero);
@@ -58,7 +58,7 @@ export class Game {
     if (this.hero.y > this.app.screen.height) {
       this.hero.y = this.app.screen.height;
       this.hero.swimming();
-    };
+    }
 
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.boxes);

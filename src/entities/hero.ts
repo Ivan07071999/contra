@@ -121,7 +121,7 @@ export class Hero extends Container {
     if (!this.isGrounded || this.isSwimming) {
       this.standUp();
       return;
-    };
+    }
 
     this.isLie = true;
     this.movement.x = 0;

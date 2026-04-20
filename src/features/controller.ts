@@ -20,9 +20,11 @@ export const keyMap: Record<string, keyof IKeys | undefined> = {
 
 export class Controller {
   public keys: IKeys;
-  public hero: Hero
+  public hero: Hero;
+  private createBullet: (() => void);
 
-  constructor(hero: Hero) {
+  constructor(hero: Hero, createBullet: () => void) {
+    this.createBullet = createBullet;
     this.hero = hero;
     this.keys = {
       up: { pressed: false },
@@ -96,5 +98,8 @@ export class Controller {
       this.hero.jump();
     }
 
+    if (this.keys.fire.pressed) {
+      this.createBullet();
+    }
   }
 }
