@@ -52,3 +52,18 @@ export interface ISpriteAtlas {
   animations: IAnimations;
 }
 
+export interface IBulletContext {
+  x: number;
+  y: number;
+  angle: number;
+}
+
+export interface IKeys {
+  up: { pressed: boolean };
+  down: { pressed: boolean };
+  left: { pressed: boolean };
+  right: { pressed: boolean };
+  jump: { pressed: boolean };
+  fire: { pressed: boolean };
+}
+

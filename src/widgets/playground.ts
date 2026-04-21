@@ -51,7 +51,7 @@ export class Playground {
   }
 
   public createBullet = (): void => {
-    const bullet = this.bulletFactory.createBullet(this.hero.x, this.hero.y);
+    const bullet = this.bulletFactory.createBullet(this.hero.bulletContext);
     this.view.addChild(bullet);
     this.bullets.push(bullet);
   };
@@ -133,12 +133,21 @@ export class Playground {
     this.view.addChild(this.bridgeContainer, this.secondBridgeContainer);
   }
 
+  private checkBullet(bullet: Bullet, index: number) {
+    if (bullet.x > 800 - this.view.x || bullet.x < -this.view.x || bullet.y > 600 || bullet.y < 0) {
+      bullet.removeFromParent();
+      this.bullets.splice(index, 1);
+    }
+  }
+
   public update(hero: Hero): void {
-    for (const bullet of this.bullets) {
-      bullet.update();
+    for (let i = 0; i < this.bullets.length; i += 1) {
+      this.bullets[i].update();
+      this.checkBullet(this.bullets[i], i)
     }
 
-    if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
+    if (!this.bridgesPosition.first.hasExploded
+       && hero.x >= this.bridgesPosition.first.position) {
       console.log('boom 1');
 
       this.bridges.forEach((segment, interval) => {
@@ -150,10 +159,8 @@ export class Playground {
       this.bridgesPosition.first.hasExploded = true;
     }
 
-    if (
-      !this.bridgesPosition.second.hasExploded &&
-      hero.x >= this.bridgesPosition.second.position
-    ) {
+    if (!this.bridgesPosition.second.hasExploded
+       && hero.x >= this.bridgesPosition.second.position) {
       console.log('boom 2');
 
       this.secondBridges.forEach((segment, interval) => {

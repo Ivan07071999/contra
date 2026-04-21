@@ -46,7 +46,7 @@ export class Game {
     this.startLoop();
   }
 
-  private update() {
+  private update(): void {
     const prevPoint = {
       x: this.hero.x,
       y: this.hero.y,
@@ -67,7 +67,7 @@ export class Game {
     // console.log(this.hero.isSwimming);
   }
 
-  updateCamera(): void {
+  private updateCamera(): void {
     //const heroPosition = -6500
     const heroPosition = -this.hero.x + 200;
 

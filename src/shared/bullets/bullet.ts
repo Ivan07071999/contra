@@ -2,9 +2,11 @@ import { Container, Graphics } from 'pixi.js';
 
 export class Bullet extends Container {
   private SPEED = 10;
+  private currentAngle: number;
 
-  constructor() {
+  constructor(angle: number) {
     super();
+    this.currentAngle = angle;
 
     const view = new Graphics()
       .setStrokeStyle({ width: 1, color: 'red' })
@@ -15,7 +17,7 @@ export class Bullet extends Container {
   }
 
   public update(): void {
-    this.x += this.SPEED;
-    //this.y += this.SPEED;
+    this.x += this.SPEED * Math.cos(this.currentAngle);
+    this.y += this.SPEED * Math.sin(this.currentAngle);
   }
 }

@@ -1,6 +1,6 @@
 import { AnimatedSprite, Container, Sprite, Texture } from 'pixi.js';
 import { HeroAnimations } from '../features/heroAnimation';
-import type { ISpriteAtlas } from '../shared/types';
+import type { IBulletContext, ISpriteAtlas } from '../shared/types';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
@@ -18,7 +18,14 @@ export class Hero extends Container {
   public stayUp = false;
   public isFlyDown = false;
   public isSwimming = false;
+  private isFlipped = false;
   private currentAnimateState = 'stay';
+  declare private bulletAngle: number;
+  private bulletPosition = {
+    x: 0,
+    y: 0,
+    angle: 0,
+  };
 
   constructor(atlasData: ISpriteAtlas) {
     super();
@@ -98,12 +105,14 @@ export class Hero extends Container {
     this.isLie = false;
     this.movement.x = -1;
     this.scale.x = -0.7;
+    this.isFlipped = true;
   }
 
   public moveRight(): void {
     this.isLie = false;
     this.movement.x = 1;
     this.scale.x = 0.7;
+    this.isFlipped = false;
   }
 
   public stop(): void {
@@ -165,5 +174,18 @@ export class Hero extends Container {
     } else {
       this.isFlyDown = false;
     }
+  }
+
+  public get bulletContext(): IBulletContext {
+    this.bulletPosition.x = this.x;
+    this.bulletPosition.y = this.y;
+    this.bulletPosition.angle = this.isFlipped ? this.bulletAngle * -1 + 180 : this.bulletAngle;
+
+    return this.bulletPosition;
+  }
+
+  public setBulletAngle(angle: number): void {
+    //console.log(angle);
+    this.bulletAngle = angle;
   }
 }

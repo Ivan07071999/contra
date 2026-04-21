@@ -1,13 +1,5 @@
 import type { Hero } from "../entities/hero";
-
-interface IKeys {
-  up: { pressed: boolean };
-  down: { pressed: boolean };
-  left: { pressed: boolean };
-  right: { pressed: boolean };
-  jump: { pressed: boolean };
-  fire: { pressed: boolean };
-}
+import type { IKeys } from "../shared/types";
 
 export const keyMap: Record<string, keyof IKeys | undefined> = {
   ArrowUp: 'up',
@@ -21,7 +13,7 @@ export const keyMap: Record<string, keyof IKeys | undefined> = {
 export class Controller {
   public keys: IKeys;
   public hero: Hero;
-  private createBullet: (() => void);
+  private createBullet: () => void;
 
   constructor(hero: Hero, createBullet: () => void) {
     this.createBullet = createBullet;
@@ -32,7 +24,7 @@ export class Controller {
       left: { pressed: false },
       right: { pressed: false },
       jump: { pressed: false },
-      fire: { pressed: false }
+      fire: { pressed: false },
     };
 
     window.addEventListener('keydown', (event) => {
@@ -59,15 +51,25 @@ export class Controller {
 
     this.keys[key].pressed = false;
   }
-
   public update() {
+
+    this.hero.runUp = false;
+    this.hero.runDown = false;
+    this.hero.stayUp = false;
+
     if (this.keys.up.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
       this.hero.runUp = true;
+      this.hero.setBulletAngle(-45);
     } else if (this.keys.down.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
       this.hero.runDown = true;
+      this.hero.setBulletAngle(45);
+    } else if (this.keys.up.pressed) {
+      this.hero.stayUp = true;
+      this.hero.setBulletAngle(-90);
+    } else if (!this.hero.isGrounded && this.keys.down.pressed) {
+      this.hero.setBulletAngle(90);
     } else {
-      this.hero.runDown = false;
-      this.hero.runUp = false;
+      this.hero.setBulletAngle(0);
     }
 
     if (this.keys.left.pressed) {
@@ -76,12 +78,6 @@ export class Controller {
       this.hero.moveRight();
     } else {
       this.hero.stop();
-    }
-
-    if (this.keys.up.pressed) {
-      this.hero.stayUp = true;
-    } else {
-      this.hero.stayUp = false;
     }
 
     if (this.keys.down.pressed && !this.keys.left.pressed && !this.keys.right.pressed) {
@@ -102,4 +98,51 @@ export class Controller {
       this.createBullet();
     }
   }
+
+  // public update() {
+  //   if (this.keys.up.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
+  //     this.hero.runUp = true;
+  //     this.hero.setBulletAngle(-45);
+  //   } else if (this.keys.down.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
+  //     this.hero.runDown = true;
+  //     this.hero.setBulletAngle(45);
+  //   } else {
+  //     this.hero.runDown = false;
+  //     this.hero.runUp = false;
+  //     this.hero.setBulletAngle(0);
+  //   }
+
+  //   if (this.keys.left.pressed) {
+  //     this.hero.moveLeft();
+  //   } else if (this.keys.right.pressed) {
+  //     this.hero.moveRight();
+  //   } else {
+  //     this.hero.stop();
+  //   }
+
+  //   if (this.keys.up.pressed) {
+  //     this.hero.stayUp = true;
+  //     this.hero.setBulletAngle(-90);
+  //   } else {
+  //     this.hero.stayUp = false;
+  //   }
+
+  //   if (this.keys.down.pressed && !this.keys.left.pressed && !this.keys.right.pressed) {
+  //     this.hero.lieDown();
+  //   } else {
+  //     this.hero.standUp();
+  //   }
+
+  //   if (this.keys.down.pressed && this.keys.jump.pressed) {
+  //     this.hero.jumpOff();
+  //   }
+
+  //   if (this.keys.jump.pressed) {
+  //     this.hero.jump();
+  //   }
+
+  //   if (this.keys.fire.pressed) {
+  //     this.createBullet();
+  //   }
+  // }
 }
