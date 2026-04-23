@@ -26,6 +26,9 @@ export class Hero extends Container {
     y: 0,
     angle: 0,
   };
+  private bulletPointShift = {
+    x: 0, y: 0,
+  }
 
   constructor(atlasData: ISpriteAtlas) {
     super();
@@ -36,6 +39,11 @@ export class Hero extends Container {
 
     this.addChild(this.hero);
     this.scale.set(0.7);
+  }
+
+  private setBulletPointShift(x: number, y: number): void {
+    this.bulletPointShift.x = (x + this.scale.x * this.scale.x) * this.scale.x;
+    this.bulletPointShift.y = y;
   }
 
   private setAnimation(state: string): void {
@@ -52,21 +60,27 @@ export class Hero extends Container {
     switch (state) {
       case 'stay':
         this.hero = this.heroAnimations.stayAnimation();
+        this.setBulletPointShift(50, -45);
         break;
       case 'lay':
         this.hero = this.heroAnimations.layAnimation();
+        this.setBulletPointShift(40, -20);
         break;
       case 'run':
         this.hero = this.heroAnimations.moveAnimation();
+        this.setBulletPointShift(50, -45);
         break;
       case 'jump':
         this.hero = this.heroAnimations.jumpAnimation();
+        this.setBulletPointShift(0, -20);
         break;
       case 'runUp':
         this.hero = this.heroAnimations.runUpAnimation();
+        this.setBulletPointShift(40, -70);
         break;
       case 'runDown':
         this.hero = this.heroAnimations.runDownAnimation();
+        this.setBulletPointShift(40, -20);
         break;
       case 'stayUp':
         this.hero = this.heroAnimations.stayUpAnimation();
@@ -177,8 +191,8 @@ export class Hero extends Container {
   }
 
   public get bulletContext(): IBulletContext {
-    this.bulletPosition.x = this.x;
-    this.bulletPosition.y = this.y;
+    this.bulletPosition.x = this.x + this.bulletPointShift.x;
+    this.bulletPosition.y = this.y +  this.bulletPointShift.y;
     this.bulletPosition.angle = this.isFlipped ? this.bulletAngle * -1 + 180 : this.bulletAngle;
 
     return this.bulletPosition;

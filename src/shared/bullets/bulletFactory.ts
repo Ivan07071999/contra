@@ -6,8 +6,8 @@ export class BulletFactory {
   public createBullet(bulletContext: IBulletContext): Bullet {
     const bullet = new Bullet(bulletContext.angle * Math.PI / 180);
 
-    bullet.x = bulletContext.x + 20;
-    bullet.y = bulletContext.y - 40;
+    bullet.x = bulletContext.x;
+    bullet.y = bulletContext.y;
 
     return bullet;
   }

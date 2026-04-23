@@ -25,6 +25,8 @@ export class Game {
     this.controller = new Controller(this.hero, this.playground.createBullet);
     this.hero.x = 200;
     this.hero.y = 100;
+
+    console.log(this.hero.width, this.hero.height);
   }
 
   public async init(): Promise<void> {

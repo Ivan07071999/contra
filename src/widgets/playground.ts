@@ -28,6 +28,7 @@ export class Playground {
   public bullets: Bullet[] = [];
   private bulletFactory: BulletFactory;
   private hero: Hero;
+  declare private recharge: number;
 
   constructor(atlasData: ISpriteAtlas, hero: Hero) {
     this.view = new Container();
@@ -51,9 +52,14 @@ export class Playground {
   }
 
   public createBullet = (): void => {
+    const now = Date.now();
+    if (now - this.recharge < 200) return;
+
     const bullet = this.bulletFactory.createBullet(this.hero.bulletContext);
     this.view.addChild(bullet);
     this.bullets.push(bullet);
+
+    this.recharge = now;
   };
 
   private createPlatforms(): void {
@@ -143,11 +149,10 @@ export class Playground {
   public update(hero: Hero): void {
     for (let i = 0; i < this.bullets.length; i += 1) {
       this.bullets[i].update();
-      this.checkBullet(this.bullets[i], i)
+      this.checkBullet(this.bullets[i], i);
     }
 
-    if (!this.bridgesPosition.first.hasExploded
-       && hero.x >= this.bridgesPosition.first.position) {
+    if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
       console.log('boom 1');
 
       this.bridges.forEach((segment, interval) => {
@@ -159,8 +164,10 @@ export class Playground {
       this.bridgesPosition.first.hasExploded = true;
     }
 
-    if (!this.bridgesPosition.second.hasExploded
-       && hero.x >= this.bridgesPosition.second.position) {
+    if (
+      !this.bridgesPosition.second.hasExploded &&
+      hero.x >= this.bridgesPosition.second.position
+    ) {
       console.log('boom 2');
 
       this.secondBridges.forEach((segment, interval) => {
