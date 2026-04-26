@@ -3,6 +3,8 @@ import type { Platform } from '../shared/platform';
 import type { Box } from '../shared/box';
 import { Hero } from '../entities/hero';
 import { Bridge } from '../shared/bridgeSegment';
+import type { Enemy } from '../entities/enemy';
+import type { Bullet } from '../shared/bullets/bullet';
 
 export class Collisions {
   public checkCollision(
@@ -47,9 +49,31 @@ export class Collisions {
     for (const box of boxes) {
       if (this.checkCollision(hero, box)) {
         hero.y = box.y;
-        //hero.isSwimming = true;
         hero.stay();
-        //console.log('Коллизия');
+      }
+    }
+  }
+
+  public resolveEnemiesCollisions(enemies: Enemy[] = [], platforms: Platform[] = []): void {
+    for (const enemy of enemies) {
+      for (const platform of platforms) {
+        if (this.checkCollision(enemy, platform)) {
+          enemy.y = platform.y;
+          enemy.stay();
+        }
+      }
+    }
+  }
+
+  public resolveBulletsForEnemiesCollisions(bullets: Bullet[], enemies: Enemy[]): void {
+    for (let i = 0; i < bullets.length; i += 1) {
+      for (let j = 0; j < enemies.length; j += 1) {
+        if (this.checkCollision(bullets[i], enemies[j])) {
+          bullets[i].removeFromParent();
+          bullets.splice(i, 1);
+          enemies[j].removeFromParent();
+          enemies.splice(j, 1);
+        }
       }
     }
   }

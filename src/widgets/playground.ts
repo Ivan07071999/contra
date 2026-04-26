@@ -9,6 +9,7 @@ import type { Hero } from '../entities/hero';
 import { PlaygroundAnimations } from '../features/playgroundAnimations';
 import type { Bullet } from '../shared/bullets/bullet';
 import { BulletFactory } from '../shared/bullets/bulletFactory';
+import { Enemy } from '../entities/enemy';
 
 export class Playground {
   public view: Container;
@@ -29,6 +30,7 @@ export class Playground {
   private bulletFactory: BulletFactory;
   private hero: Hero;
   declare private recharge: number;
+  public enemies: Enemy[] = [];
 
   constructor(atlasData: ISpriteAtlas, hero: Hero) {
     this.view = new Container();
@@ -42,6 +44,7 @@ export class Playground {
       first: { position: 1620, hasExploded: false },
       second: { position: 2260, hasExploded: false },
     };
+    //this.enemy = new Enemy(atlasData);
 
     this.createPlatforms();
     this.addWater();
@@ -49,6 +52,8 @@ export class Playground {
     this.addBoss();
     this.createBoxes();
     this.update(hero);
+    this.addEnemies(atlasData);
+    //this.view.addChild(this.enemies);
   }
 
   public createBullet = (): void => {
@@ -61,6 +66,14 @@ export class Playground {
 
     this.recharge = now;
   };
+
+  private addEnemies(atlasData: ISpriteAtlas): void {
+    for (const enemy of platforms.enemies) {
+      const item = new Enemy(atlasData, enemy.x, enemy.y);
+      this.view.addChild(item);
+      this.enemies.push(item);
+    }
+  }
 
   private createPlatforms(): void {
     for (const platform of platforms.data) {
@@ -147,13 +160,16 @@ export class Playground {
   }
 
   public update(hero: Hero): void {
+    for (const enemy of this.enemies) {
+      enemy.update();
+    }
+
     for (let i = 0; i < this.bullets.length; i += 1) {
       this.bullets[i].update();
       this.checkBullet(this.bullets[i], i);
     }
 
     if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
-      console.log('boom 1');
 
       this.bridges.forEach((segment, interval) => {
         setTimeout(() => {
@@ -168,7 +184,6 @@ export class Playground {
       !this.bridgesPosition.second.hasExploded &&
       hero.x >= this.bridgesPosition.second.position
     ) {
-      console.log('boom 2');
 
       this.secondBridges.forEach((segment, interval) => {
         setTimeout(() => {

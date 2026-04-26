@@ -63,9 +63,11 @@ export class Game {
     }
 
     this.collisions.resolvePlatformsCollisions(this.hero, this.playground.platforms, prevPoint);
+    this.collisions.resolveEnemiesCollisions(this.playground.enemies, this.playground.platforms )
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.boxes);
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.bridges);
     this.collisions.resolveBoxesCollisions(this.hero, this.playground.secondBridges);
+    this.collisions.resolveBulletsForEnemiesCollisions(this.playground.bullets, this.playground.enemies);
     // console.log(this.hero.isSwimming);
   }
 
