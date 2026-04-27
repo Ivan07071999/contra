@@ -31,7 +31,7 @@ export class Playground {
   public enemies: Enemy[] = [];
   public bulletFactory: BulletFactory;
   public hero: Hero;
-  private tourellies: Tourelle[] = [];
+  public tourellies: Tourelle[] = [];
 
   constructor(atlasData: ISpriteAtlas) {
     this.view = new Container();
@@ -58,12 +58,12 @@ export class Playground {
     this.createBoxes();
     this.update(this.hero);
     this.addEnemies(atlasData);
-    this.addTourellies(this.hero);
+    this.addTourellies();
   }
 
-  private addTourellies(hero: Hero): void {
+  private addTourellies(): void {
     for (const tourele of platforms.tourelles) {
-      const item = new Tourelle(this.bulletFactory, hero, tourele.x, tourele.y);
+      const item = new Tourelle(this.bulletFactory, this.hero, tourele.x, tourele.y, this.playgroundAnimations);
       this.tourellies.push(item);
       this.view.addChild(item);
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-for-of */
 import type { Container, Rectangle } from 'pixi.js';
 import type { Platform } from '../shared/platform';
 import type { Box } from '../shared/box';
@@ -5,6 +6,7 @@ import { Hero } from '../entities/hero';
 import { Bridge } from '../shared/bridgeSegment';
 import type { Enemy } from '../entities/enemy';
 import type { Bullet } from '../shared/bullets/bullet';
+import type { Tourelle } from '../entities/tourelle';
 
 export class Collisions {
   public checkCollision(
@@ -74,6 +76,25 @@ export class Collisions {
           enemies.splice(j, 1);
           bullets[i].removeFromParent();
           bullets.splice(i, 1);
+          break;
+        }
+      }
+    }
+  }
+
+  public resolveBulletsForTourelliesCollisions(bullets: Bullet[], tourellies: Tourelle[]): void {
+    for (let i = 0; i < bullets.length; i += 1) {
+      if (bullets[i].type !== 'heroBullet') continue;
+      for (let j = 0; j < tourellies.length; j += 1) {
+        if (this.checkCollision(bullets[i], tourellies[j])) {
+          bullets[i].removeFromParent();
+          bullets.splice(i, 1);
+          tourellies[j].HP -= 1;
+
+          if (tourellies[j].HP === 0) {
+            tourellies[j].destroyTourelle();
+            tourellies.splice(j, 1);
+          }
           break;
         }
       }

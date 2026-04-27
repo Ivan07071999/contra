@@ -17,7 +17,6 @@ export class Game {
   constructor(atlasData: ISpriteAtlas) {
     this.app = new Application();
     this.atlasData = atlasData;
-    //this.hero = new Hero(this.atlasData);
     this.playground = new Playground(this.atlasData);
     this.collisions = new Collisions();
     this.controller = new Controller(this.playground.hero);
@@ -62,6 +61,7 @@ export class Game {
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.bridges);
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.secondBridges);
     this.collisions.resolveBulletsForEnemiesCollisions(this.playground.bullets, this.playground.enemies);
+    this.collisions.resolveBulletsForTourelliesCollisions(this.playground.bullets, this.playground.tourellies)
     // console.log(this.hero.isSwimming);
   }
 
