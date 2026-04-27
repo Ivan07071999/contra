@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/prefer-for-of */
 import type { Container, Rectangle } from 'pixi.js';
 import type { Platform } from '../shared/platform';
 import type { Box } from '../shared/box';
