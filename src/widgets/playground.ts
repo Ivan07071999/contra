@@ -10,6 +10,7 @@ import { PlaygroundAnimations } from '../features/playgroundAnimations';
 import type { Bullet } from '../shared/bullets/bullet';
 import { BulletFactory } from '../shared/bullets/bulletFactory';
 import { Enemy } from '../entities/enemy';
+import { Tourelle } from '../entities/tourelle';
 
 export class Playground {
   public view: Container;
@@ -27,24 +28,23 @@ export class Playground {
   public hasExploded = false;
   private playgroundAnimations: PlaygroundAnimations;
   public bullets: Bullet[] = [];
-  private bulletFactory: BulletFactory;
+  public bulletFactory: BulletFactory;
   private hero: Hero;
-  declare private recharge: number;
   public enemies: Enemy[] = [];
+  private tourellies: Tourelle[] = [];
 
   constructor(atlasData: ISpriteAtlas, hero: Hero) {
     this.view = new Container();
     this.bossContainer = new Container();
     this.bridgeContainer = new Container();
     this.hero = hero;
-    this.bulletFactory = new BulletFactory();
+    this.bulletFactory = new BulletFactory(this.view, this.bullets);
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData);
     this.bridgesPosition = {
       first: { position: 1620, hasExploded: false },
       second: { position: 2260, hasExploded: false },
     };
-    //this.enemy = new Enemy(atlasData);
 
     this.createPlatforms();
     this.addWater();
@@ -53,19 +53,17 @@ export class Playground {
     this.createBoxes();
     this.update(hero);
     this.addEnemies(atlasData);
+    this.addTourellies(hero);
     //this.view.addChild(this.enemies);
   }
 
-  public createBullet = (): void => {
-    const now = Date.now();
-    if (now - this.recharge < 200) return;
-
-    const bullet = this.bulletFactory.createBullet(this.hero.bulletContext);
-    this.view.addChild(bullet);
-    this.bullets.push(bullet);
-
-    this.recharge = now;
-  };
+  private addTourellies(hero: Hero): void {
+    for (const tourele of platforms.tourelles) {
+      const item = new Tourelle(this.bulletFactory, hero, tourele.x, tourele.y);
+      this.tourellies.push(item);
+      this.view.addChild(item);
+    }
+  }
 
   private addEnemies(atlasData: ISpriteAtlas): void {
     for (const enemy of platforms.enemies) {
@@ -162,6 +160,10 @@ export class Playground {
   public update(hero: Hero): void {
     for (const enemy of this.enemies) {
       enemy.update();
+    }
+
+    for (const tourele of this.tourellies) {
+      tourele.update();
     }
 
     for (let i = 0; i < this.bullets.length; i += 1) {

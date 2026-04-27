@@ -13,10 +13,8 @@ export const keyMap: Record<string, keyof IKeys | undefined> = {
 export class Controller {
   public keys: IKeys;
   public hero: Hero;
-  private createBullet: () => void;
 
-  constructor(hero: Hero, createBullet: () => void) {
-    this.createBullet = createBullet;
+  constructor(hero: Hero) {
     this.hero = hero;
     this.keys = {
       up: { pressed: false },
@@ -52,7 +50,6 @@ export class Controller {
     this.keys[key].pressed = false;
   }
   public update() {
-
     this.hero.runUp = false;
     this.hero.runDown = false;
     this.hero.stayUp = false;
@@ -95,54 +92,8 @@ export class Controller {
     }
 
     if (this.keys.fire.pressed) {
-      this.createBullet();
+      //this.hero.fire();
+      console.log('cnhtkztv');
     }
   }
-
-  // public update() {
-  //   if (this.keys.up.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
-  //     this.hero.runUp = true;
-  //     this.hero.setBulletAngle(-45);
-  //   } else if (this.keys.down.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
-  //     this.hero.runDown = true;
-  //     this.hero.setBulletAngle(45);
-  //   } else {
-  //     this.hero.runDown = false;
-  //     this.hero.runUp = false;
-  //     this.hero.setBulletAngle(0);
-  //   }
-
-  //   if (this.keys.left.pressed) {
-  //     this.hero.moveLeft();
-  //   } else if (this.keys.right.pressed) {
-  //     this.hero.moveRight();
-  //   } else {
-  //     this.hero.stop();
-  //   }
-
-  //   if (this.keys.up.pressed) {
-  //     this.hero.stayUp = true;
-  //     this.hero.setBulletAngle(-90);
-  //   } else {
-  //     this.hero.stayUp = false;
-  //   }
-
-  //   if (this.keys.down.pressed && !this.keys.left.pressed && !this.keys.right.pressed) {
-  //     this.hero.lieDown();
-  //   } else {
-  //     this.hero.standUp();
-  //   }
-
-  //   if (this.keys.down.pressed && this.keys.jump.pressed) {
-  //     this.hero.jumpOff();
-  //   }
-
-  //   if (this.keys.jump.pressed) {
-  //     this.hero.jump();
-  //   }
-
-  //   if (this.keys.fire.pressed) {
-  //     this.createBullet();
-  //   }
-  // }
 }

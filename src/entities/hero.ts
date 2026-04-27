@@ -19,20 +19,23 @@ export class Hero extends Container {
   public isFlyDown = false;
   public isSwimming = false;
   private isFlipped = false;
+  //private bulletFactory: BulletFactory;
   private currentAnimateState = 'stay';
   declare private bulletAngle: number;
-  private bulletPosition = {
+  public bulletPosition: IBulletContext = {
     x: 0,
     y: 0,
     angle: 0,
+    type: 'heroBullet',
   };
   private bulletPointShift = {
-    x: 0, y: 0,
-  }
+    x: 0,
+    y: 0,
+  };
 
   constructor(atlasData: ISpriteAtlas) {
     super();
-
+    //this.bulletFactory = bulletFactory;
     this.heroAnimations = new HeroAnimations(atlasData);
     this.hero = new Sprite(Texture.WHITE);
     this.setAnimation('jump');
@@ -192,7 +195,7 @@ export class Hero extends Container {
 
   public get bulletContext(): IBulletContext {
     this.bulletPosition.x = this.x + this.bulletPointShift.x;
-    this.bulletPosition.y = this.y +  this.bulletPointShift.y;
+    this.bulletPosition.y = this.y + this.bulletPointShift.y;
     this.bulletPosition.angle = this.isFlipped ? this.bulletAngle * -1 + 180 : this.bulletAngle;
 
     return this.bulletPosition;
@@ -202,4 +205,8 @@ export class Hero extends Container {
     //console.log(angle);
     this.bulletAngle = angle;
   }
+
+  // public fire(): void {
+  //   this.bulletFactory.createBullet(this.bulletContext);
+  // }
 }

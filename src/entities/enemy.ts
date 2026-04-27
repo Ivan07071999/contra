@@ -10,7 +10,7 @@ export class Enemy extends Container {
   private JUMP_FORCE = 5.5;
   private velocityY = 0;
   private isGround = false;
-  private flyDown = false;
+  private jumpAttempted = false;
 
   constructor(atlasData: ISpriteAtlas, x: number, y: number) {
     super();
@@ -27,6 +27,12 @@ export class Enemy extends Container {
   public update(): void {
     this.x -= this.SPEED;
 
+    if (this.velocityY > 0 && !this.jumpAttempted) {
+      if (Math.random() > 0.5) this.jump();
+
+      this.jumpAttempted = true;
+    }
+
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
   }
@@ -34,9 +40,12 @@ export class Enemy extends Container {
   public stay(): void {
     this.isGround = true;
     this.velocityY = 0;
+    this.jumpAttempted = false;
   }
 
   public jump(): void {
+    if (!this.isGround) return;
+
     this.velocityY -= this.JUMP_FORCE;
     this.isGround = false;
   }

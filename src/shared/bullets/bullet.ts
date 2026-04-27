@@ -1,8 +1,9 @@
 import { Container, Graphics } from 'pixi.js';
 
 export class Bullet extends Container {
-  private SPEED = 10;
+  private SPEED = 5;
   private currentAngle: number;
+  declare public type: string;
 
   constructor(angle: number) {
     super();

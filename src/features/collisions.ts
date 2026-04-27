@@ -67,8 +67,10 @@ export class Collisions {
 
   public resolveBulletsForEnemiesCollisions(bullets: Bullet[], enemies: Enemy[]): void {
     for (let i = 0; i < bullets.length; i += 1) {
+      // console.log(bullets[0]);
+
       for (let j = 0; j < enemies.length; j += 1) {
-        if (this.checkCollision(bullets[i], enemies[j])) {
+        if (this.checkCollision(bullets[i], enemies[j]) && bullets[i].type === 'heroBullet') {
           bullets[i].removeFromParent();
           bullets.splice(i, 1);
           enemies[j].removeFromParent();

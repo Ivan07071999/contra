@@ -56,6 +56,7 @@ export interface IBulletContext {
   x: number;
   y: number;
   angle: number;
+  type: string;
 }
 
 export interface IKeys {

@@ -22,7 +22,7 @@ export class Game {
     this.hero = new Hero(this.atlasData);
     this.playground = new Playground(this.atlasData, this.hero);
     this.collisions = new Collisions();
-    this.controller = new Controller(this.hero, this.playground.createBullet);
+    this.controller = new Controller(this.hero);
     this.hero.x = 200;
     this.hero.y = 100;
 
