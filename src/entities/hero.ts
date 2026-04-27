@@ -1,6 +1,7 @@
 import { AnimatedSprite, Container, Sprite, Texture } from 'pixi.js';
 import { HeroAnimations } from '../features/heroAnimation';
 import type { IBulletContext, ISpriteAtlas } from '../shared/types';
+import type { BulletFactory } from '../shared/bullets/bulletFactory';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
@@ -19,7 +20,8 @@ export class Hero extends Container {
   public isFlyDown = false;
   public isSwimming = false;
   private isFlipped = false;
-  //private bulletFactory: BulletFactory;
+  declare private recharge: number;
+  private bulletFactory: BulletFactory;
   private currentAnimateState = 'stay';
   declare private bulletAngle: number;
   public bulletPosition: IBulletContext = {
@@ -33,15 +35,16 @@ export class Hero extends Container {
     y: 0,
   };
 
-  constructor(atlasData: ISpriteAtlas) {
+  constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory) {
     super();
-    //this.bulletFactory = bulletFactory;
+    this.bulletFactory = bulletFactory;
     this.heroAnimations = new HeroAnimations(atlasData);
     this.hero = new Sprite(Texture.WHITE);
     this.setAnimation('jump');
 
     this.addChild(this.hero);
     this.scale.set(0.7);
+    this.zIndex = 1;
   }
 
   private setBulletPointShift(x: number, y: number): void {
@@ -206,7 +209,11 @@ export class Hero extends Container {
     this.bulletAngle = angle;
   }
 
-  // public fire(): void {
-  //   this.bulletFactory.createBullet(this.bulletContext);
-  // }
+  public fire(): void {
+    const now = Date.now();
+    if (now - this.recharge < 200) return;
+
+    this.bulletFactory.createBullet(this.bulletContext);
+    this.recharge = now;
+  }
 }

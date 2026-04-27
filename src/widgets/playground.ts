@@ -5,7 +5,7 @@ import { Platform } from '../shared/platform';
 import { Box } from '../shared/box';
 import { Bridge } from '../shared/bridgeSegment';
 import type { ISpriteAtlas } from '../shared/types';
-import type { Hero } from '../entities/hero';
+import { Hero } from '../entities/hero';
 import { PlaygroundAnimations } from '../features/playgroundAnimations';
 import type { Bullet } from '../shared/bullets/bullet';
 import { BulletFactory } from '../shared/bullets/bulletFactory';
@@ -28,17 +28,17 @@ export class Playground {
   public hasExploded = false;
   private playgroundAnimations: PlaygroundAnimations;
   public bullets: Bullet[] = [];
-  public bulletFactory: BulletFactory;
-  private hero: Hero;
   public enemies: Enemy[] = [];
+  public bulletFactory: BulletFactory;
+  public hero: Hero;
   private tourellies: Tourelle[] = [];
 
-  constructor(atlasData: ISpriteAtlas, hero: Hero) {
+  constructor(atlasData: ISpriteAtlas) {
     this.view = new Container();
     this.bossContainer = new Container();
     this.bridgeContainer = new Container();
-    this.hero = hero;
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
+    this.hero = new Hero(atlasData, this.bulletFactory);
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData);
     this.bridgesPosition = {
@@ -46,15 +46,19 @@ export class Playground {
       second: { position: 2260, hasExploded: false },
     };
 
+    this.hero.x = 200;
+    this.hero.y = 100;
+
+    this.view.addChild(this.hero);
+
     this.createPlatforms();
     this.addWater();
     this.createBridge();
     this.addBoss();
     this.createBoxes();
-    this.update(hero);
+    this.update(this.hero);
     this.addEnemies(atlasData);
-    this.addTourellies(hero);
-    //this.view.addChild(this.enemies);
+    this.addTourellies(this.hero);
   }
 
   private addTourellies(hero: Hero): void {
@@ -172,7 +176,6 @@ export class Playground {
     }
 
     if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
-
       this.bridges.forEach((segment, interval) => {
         setTimeout(() => {
           segment.blowUpSegment();
@@ -186,7 +189,6 @@ export class Playground {
       !this.bridgesPosition.second.hasExploded &&
       hero.x >= this.bridgesPosition.second.position
     ) {
-
       this.secondBridges.forEach((segment, interval) => {
         setTimeout(() => {
           segment.blowUpSegment();

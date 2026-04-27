@@ -92,8 +92,7 @@ export class Controller {
     }
 
     if (this.keys.fire.pressed) {
-      //this.hero.fire();
-      console.log('cnhtkztv');
+      this.hero.fire();
     }
   }
 }
