@@ -2,9 +2,11 @@ import { AnimatedSprite, Container, Sprite, Texture } from 'pixi.js';
 import { HeroAnimations } from '../features/heroAnimation';
 import type { IBulletContext, ISpriteAtlas } from '../shared/types';
 import type { BulletFactory } from '../shared/bullets/bulletFactory';
+import { Weapon } from '../shared/weapon';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
+  private weapon: Weapon;
   private hero: Sprite | AnimatedSprite | Container;
   private GRAVITY_FORCE = 0.1;
   private JUMP_FORCE = 5.5;
@@ -39,6 +41,7 @@ export class Hero extends Container {
   constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory) {
     super();
     this.bulletFactory = bulletFactory;
+    this.weapon = new Weapon(this.bulletFactory);
     this.heroAnimations = new HeroAnimations(atlasData);
     this.hero = new Sprite(Texture.WHITE);
     this.setAnimation('jump');
@@ -46,6 +49,7 @@ export class Hero extends Container {
     this.addChild(this.hero);
     this.scale.set(0.7);
     this.zIndex = 1;
+    this.weapon.setWeapon(2);
   }
 
   private setBulletPointShift(x: number, y: number): void {
@@ -225,7 +229,8 @@ export class Hero extends Container {
     const now = Date.now();
     if (now - this.recharge < 200) return;
 
-    this.bulletFactory.createBullet(this.bulletContext);
+    //this.bulletFactory.createBullet(this.bulletContext);
+    this.weapon.currentGun(this.bulletContext)
     this.recharge = now;
   }
 }

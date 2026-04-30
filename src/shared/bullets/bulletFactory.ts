@@ -28,6 +28,24 @@ export class BulletFactory {
     return bullet;
   }
 
+  public createSpreadBullet(bulletContext: IBulletContext): Bullet {
+    const bullet = new Bullet((bulletContext.angle * Math.PI) / 180);
+
+    bullet.x = bulletContext.x;
+    bullet.y = bulletContext.y;
+    bullet.type = bulletContext.type;
+    bullet.SPEED = 3;
+
+    const view = new Graphics();
+    view.circle(0, 0, 4).fill(0xff2222).circle(-1, -1, 2).fill(0xdddddd);
+    bullet.addChild(view);
+
+    this.playground.addChild(bullet);
+    this.bullets.push(bullet);
+
+    return bullet;
+  }
+
   public createBossBullet(bulletContext: IBulletContext, isDestroy: boolean): Bullet | undefined {
     if (isDestroy) return;
 
@@ -36,7 +54,7 @@ export class BulletFactory {
     bullet.x = bulletContext.x;
     bullet.y = bulletContext.y;
     bullet.type = bulletContext.type;
-    bullet.SPEED = Math.random() * -6 -2;
+    bullet.SPEED = Math.random() * -6 - 2;
 
     const view = new Graphics();
     view.circle(0, 0, 6).fill(0xff2222).circle(-2, -2, 3).fill(0xdddddd);
