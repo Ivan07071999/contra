@@ -6,6 +6,8 @@ import { Bridge } from '../shared/bridgeSegment';
 import type { Enemy } from '../entities/enemy';
 import type { Bullet } from '../shared/bullets/bullet';
 import type { Tourelle } from '../entities/tourelle';
+import { BossWeapons } from '../shared/bossWeapons';
+import type { BossDoor } from '../shared/bossDoor';
 
 export class Collisions {
   public checkCollision(
@@ -96,6 +98,51 @@ export class Collisions {
           }
           break;
         }
+      }
+    }
+  }
+
+  public resolveBulletsForBossGunCollision(bossWeapons: BossWeapons, bullets: Bullet[]): void {
+    for (let i = 0; i < bullets.length; i += 1) {
+      if (bullets[i].type !== 'heroBullet') continue;
+      for (let j = 0; j < bossWeapons.bossWeapons.length; j += 1) {
+        if (this.checkCollision(bullets[i], bossWeapons.bossWeapons[j])) {
+          bullets[i].removeFromParent();
+          bullets.splice(i, 1);
+          bossWeapons.bossGunHP[j] -= 1;
+          break;
+        }
+      }
+    }
+  }
+
+  public resolveBossDoorCollision(bossDoor: BossDoor, bullets: Bullet[]): void {
+    for (let i = 0; i < bullets.length; i += 1) {
+      if (bullets[i].type !== 'heroBullet') continue;
+      if (this.checkCollision(bossDoor, bullets[i])) {
+        bullets[i].removeFromParent();
+        bullets.splice(i, 1);
+        bossDoor.HP -= 1;
+        break;
+      }
+    }
+  }
+
+  public resolveEnemyBulletsForHeroCollisions(hero: Hero, bullets: Bullet[]): void {
+    for (let i = 0; i < bullets.length; i += 1) {
+      if (bullets[i].type !== 'enemyBullet') continue;
+      if (this.checkCollision(hero, bullets[i])) {
+        bullets[i].removeFromParent();
+        bullets.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  public resolveEnemyForHeroCollisions(hero: Hero, enemies: Enemy[]) {
+    for (const enemy of enemies) {
+      if (this.checkCollision(hero, enemy)) {
+        console.log('Столкновение с врагом');
       }
     }
   }

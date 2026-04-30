@@ -69,6 +69,12 @@ export class Controller {
       this.hero.setBulletAngle(0);
     }
 
+    if ((this.keys.left.pressed || this.keys.right.pressed) && this.keys.fire.pressed) {
+      this.hero.runAndShoot = true;
+    } else {
+      this.hero.runAndShoot = false;
+    }
+
     if (this.keys.left.pressed) {
       this.hero.moveLeft();
     } else if (this.keys.right.pressed) {

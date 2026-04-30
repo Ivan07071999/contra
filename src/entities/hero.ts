@@ -5,7 +5,7 @@ import type { BulletFactory } from '../shared/bullets/bulletFactory';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
-  private hero: Sprite | AnimatedSprite;
+  private hero: Sprite | AnimatedSprite | Container;
   private GRAVITY_FORCE = 0.1;
   private JUMP_FORCE = 5.5;
   private SPEED = 2;
@@ -20,6 +20,7 @@ export class Hero extends Container {
   public isFlyDown = false;
   public isSwimming = false;
   private isFlipped = false;
+  public runAndShoot = false;
   declare private recharge: number;
   private bulletFactory: BulletFactory;
   private currentAnimateState = 'stay';
@@ -90,12 +91,21 @@ export class Hero extends Container {
         break;
       case 'stayUp':
         this.hero = this.heroAnimations.stayUpAnimation();
+        this.setBulletPointShift(10, -95);
+        break;
+      case 'runAndShoot':
+        this.hero = this.heroAnimations.runShootAnimation();
+        this.setBulletPointShift(50, -45);
         break;
       default:
         this.hero = this.heroAnimations.stayAnimation();
     }
 
-    this.hero.anchor.set(0.5, 1);
+    if (this.hero instanceof Sprite || this.hero instanceof AnimatedSprite) {
+      this.hero.anchor.set(0.5, 1);
+    }
+
+    //this.hero.anchor.set(0.5, 1);
     this.hero.position.set(0, 0);
     this.addChild(this.hero);
   }
@@ -177,6 +187,8 @@ export class Hero extends Container {
       state = 'runUp';
     } else if (this.runDown) {
       state = 'runDown';
+    } else if (this.runAndShoot) {
+      state = 'runAndShoot';
     } else if (this.movement.x !== 0) {
       state = 'run';
     } else if (this.stayUp) {

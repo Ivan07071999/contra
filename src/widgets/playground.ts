@@ -1,5 +1,5 @@
 
-import { Container, Sprite, Texture, TilingSprite } from 'pixi.js';
+import { Container, Texture, TilingSprite } from 'pixi.js';
 import platforms from '../../src/shared/platforms.json';
 import { Platform } from '../shared/platform';
 import { Box } from '../shared/box';
@@ -11,10 +11,10 @@ import type { Bullet } from '../shared/bullets/bullet';
 import { BulletFactory } from '../shared/bullets/bulletFactory';
 import { Enemy } from '../entities/enemy';
 import { Tourelle } from '../entities/tourelle';
+import { Boss } from '../entities/boss';
 
 export class Playground {
   public view: Container;
-  private bossContainer: Container;
   private bridgeContainer: Container;
   private secondBridgeContainer: Container;
   public platforms: Platform[] = [];
@@ -32,10 +32,10 @@ export class Playground {
   public bulletFactory: BulletFactory;
   public hero: Hero;
   public tourellies: Tourelle[] = [];
+  public boss: Boss;
 
   constructor(atlasData: ISpriteAtlas) {
     this.view = new Container();
-    this.bossContainer = new Container();
     this.bridgeContainer = new Container();
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
     this.hero = new Hero(atlasData, this.bulletFactory);
@@ -48,17 +48,22 @@ export class Playground {
 
     this.hero.x = 200;
     this.hero.y = 100;
+    this.boss = new Boss(atlasData, this.bulletFactory);
 
     this.view.addChild(this.hero);
 
     this.createPlatforms();
     this.addWater();
     this.createBridge();
-    this.addBoss();
     this.createBoxes();
     this.update(this.hero);
     this.addEnemies(atlasData);
     this.addTourellies();
+    this.addBoss();
+  }
+
+  private addBoss(): void {
+    this.view.addChild(this.boss);
   }
 
   private addTourellies(): void {
@@ -91,34 +96,6 @@ export class Playground {
       this.view.addChild(item);
       this.boxes.push(item);
     }
-  }
-
-  private addBoss(): void {
-    const bossTexture = Texture.from('boss0000');
-    const bossDoorTexture = Texture.from('bossdoor0001');
-    const bossGunTexture = Texture.from('bossgun0000');
-
-    const bossGun = new Sprite(bossGunTexture);
-    const bossGun2 = new Sprite(bossGunTexture);
-    const bossDoor = new Sprite(bossDoorTexture);
-    const bossSprite = new Sprite(bossTexture);
-
-    bossSprite.scale.set(0.7);
-    bossDoor.scale.set(0.7);
-    bossGun.scale.set(0.7);
-    bossGun2.scale.set(0.7);
-
-    bossGun.y = 140;
-    bossGun2.y = 140;
-    bossGun2.x = 35;
-    bossDoor.x = 15;
-    bossDoor.y = 200;
-
-    this.bossContainer.scale.set(1.3);
-
-    this.bossContainer.position.set(6910, 180);
-    this.bossContainer.addChild(bossSprite, bossDoor, bossGun, bossGun2);
-    this.view.addChild(this.bossContainer);
   }
 
   private addWater(): void {
@@ -162,6 +139,8 @@ export class Playground {
   }
 
   public update(hero: Hero): void {
+    this.boss.update();
+
     for (const enemy of this.enemies) {
       enemy.update();
     }
@@ -197,6 +176,7 @@ export class Playground {
 
       this.bridgesPosition.second.hasExploded = true;
     }
+
   }
 
   public get position(): number {

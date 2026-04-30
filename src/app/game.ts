@@ -9,7 +9,7 @@ import type { ISpriteAtlas } from '../shared/types';
 export class Game {
   private app: Application;
   private atlasData: ISpriteAtlas;
-  private background!: Background;
+  declare private background: Background;
   private playground: Playground;
   private collisions: Collisions;
   private controller: Controller;
@@ -61,8 +61,11 @@ export class Game {
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.bridges);
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.secondBridges);
     this.collisions.resolveBulletsForEnemiesCollisions(this.playground.bullets, this.playground.enemies);
-    this.collisions.resolveBulletsForTourelliesCollisions(this.playground.bullets, this.playground.tourellies)
-    // console.log(this.hero.isSwimming);
+    this.collisions.resolveBulletsForTourelliesCollisions(this.playground.bullets, this.playground.tourellies);
+    this.collisions.resolveBulletsForBossGunCollision(this.playground.boss.bossWeapons, this.playground.bullets);
+    this.collisions.resolveBossDoorCollision(this.playground.boss.bossDoor, this.playground.bullets);
+    this.collisions.resolveEnemyBulletsForHeroCollisions(this.playground.hero, this.playground.bullets);
+    this.collisions.resolveEnemyForHeroCollisions(this.playground.hero, this.playground.enemies);
   }
 
   private updateCamera(): void {

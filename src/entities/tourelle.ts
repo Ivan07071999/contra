@@ -14,7 +14,7 @@ export class Tourelle extends Container {
   public HP = 5;
 
   constructor(
-    bulletfactory: BulletFactory,
+    bulletFactory: BulletFactory,
     target: Hero,
     x: number,
     y: number,
@@ -22,7 +22,7 @@ export class Tourelle extends Container {
   ) {
     super();
 
-    this.bulletFactory = bulletfactory;
+    this.bulletFactory = bulletFactory;
     this.animation = animation;
     this.x = x;
     this.y = y;

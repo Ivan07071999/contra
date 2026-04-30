@@ -17,4 +17,13 @@ export class PlaygroundAnimations {
 
     return animation;
   }
+
+  public bossAnimation(): AnimatedSprite {
+    const frames = this.atlasData.animations.bossdoor as Texture[];
+    const animations = new AnimatedSprite(frames);
+    animations.animationSpeed = 0.1;
+    animations.play();
+
+    return animations;
+  }
 }
