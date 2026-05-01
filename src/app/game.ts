@@ -66,6 +66,9 @@ export class Game {
     this.collisions.resolveBossDoorCollision(this.playground.boss.bossDoor, this.playground.bullets);
     this.collisions.resolveEnemyBulletsForHeroCollisions(this.playground.hero, this.playground.bullets);
     this.collisions.resolveEnemyForHeroCollisions(this.playground.hero, this.playground.enemies);
+    this.collisions.resolveBulletsForBoosterCollisions(this.playground.weaponBoosters, this.playground.bullets);
+    this.collisions.resolveHeroForBoostersCollisions(this.playground.hero, this.playground.weaponBoosters);
+    this.collisions.resolveBoostersForPlatformsCollisions(this.playground.weaponBoosters, this.playground.platforms);
   }
 
   private updateCamera(): void {

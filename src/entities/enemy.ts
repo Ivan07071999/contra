@@ -49,4 +49,19 @@ export class Enemy extends Container {
     this.velocityY -= this.JUMP_FORCE;
     this.isGround = false;
   }
+
+  public blowUpEnemy(): void {
+    this.removeChild(this.sprite);
+
+    const explosion = this.enemyAnimation.explosionAnimation();
+    explosion.anchor.set(0.5, 1);
+
+    explosion.onComplete = () => {
+      explosion.removeFromParent();
+      explosion.destroy();
+    }
+
+    this.sprite = explosion;
+    this.addChild(this.sprite);
+  }
 }

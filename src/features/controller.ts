@@ -17,12 +17,12 @@ export class Controller {
   constructor(hero: Hero) {
     this.hero = hero;
     this.keys = {
-      up: { pressed: false },
-      down: { pressed: false },
-      left: { pressed: false },
-      right: { pressed: false },
-      jump: { pressed: false },
-      fire: { pressed: false },
+      up: { pressed: false, justPressed: false },
+      down: { pressed: false, justPressed: false },
+      left: { pressed: false, justPressed: false },
+      right: { pressed: false, justPressed: false },
+      jump: { pressed: false, justPressed: false },
+      fire: { pressed: false, justPressed: false },
     };
 
     window.addEventListener('keydown', (event) => {
@@ -49,6 +49,7 @@ export class Controller {
 
     this.keys[key].pressed = false;
   }
+
   public update() {
     this.hero.runUp = false;
     this.hero.runDown = false;

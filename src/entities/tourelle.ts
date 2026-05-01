@@ -78,7 +78,6 @@ export class Tourelle extends Container {
     const explosion = this.animation.explosionAnimation();
 
     explosion.onComplete = () => {
-      //this.removeFromParent();
       this.tourelleGun.removeFromParent()
     };
 

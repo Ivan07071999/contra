@@ -6,11 +6,12 @@ import { Weapon } from '../shared/weapon';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
-  private weapon: Weapon;
+  public weapon: Weapon;
   private hero: Sprite | AnimatedSprite | Container;
   private GRAVITY_FORCE = 0.1;
   private JUMP_FORCE = 5.5;
   private SPEED = 2;
+  public HP = 3;
   private velocityX = 0;
   public velocityY = 0;
   private movement = { x: 0, y: 0 };
@@ -23,7 +24,10 @@ export class Hero extends Container {
   public isSwimming = false;
   private isFlipped = false;
   public runAndShoot = false;
+  public isDead = false;
+  private isInvincible = false;
   declare private recharge: number;
+  public rechargeTime = 200;
   private bulletFactory: BulletFactory;
   private currentAnimateState = 'stay';
   declare private bulletAngle: number;
@@ -49,7 +53,6 @@ export class Hero extends Container {
     this.addChild(this.hero);
     this.scale.set(0.7);
     this.zIndex = 1;
-    this.weapon.setWeapon(2);
   }
 
   private setBulletPointShift(x: number, y: number): void {
@@ -115,6 +118,14 @@ export class Hero extends Container {
   }
 
   public update(): void {
+    if (this.isDead) return;
+
+    if (this.isInvincible) {
+      this.alpha = Math.floor(Date.now() / 100) % 2 === 0 ? 0.5 : 1;
+    } else {
+      this.alpha = 1;
+    }
+
     this.velocityX = this.movement.x * this.SPEED;
     this.x += this.velocityX;
 
@@ -226,11 +237,50 @@ export class Hero extends Container {
   }
 
   public fire(): void {
+    if (this.isDead) return;
     const now = Date.now();
-    if (now - this.recharge < 200) return;
+    if (now - this.recharge < this.rechargeTime) return;
 
     //this.bulletFactory.createBullet(this.bulletContext);
-    this.weapon.currentGun(this.bulletContext)
+    this.weapon.currentGun(this.bulletContext);
     this.recharge = now;
+  }
+
+  public respawnHero(): void {
+    this.GRAVITY_FORCE = 0.1;
+    this.visible = true;
+    this.x = 200;
+    this.y = 100;
+
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.movement.x = 0;
+    this.isDead = false;
+    this.isGrounded = false;
+    this.isLie = false;
+    this.runUp = false;
+    this.runDown = false;
+    this.runAndShoot = false;
+    this.scale.x = 0.7;
+
+    this.visible = true;
+    this.isInvincible = true;
+
+    setTimeout(() => {
+      this.isInvincible = false;
+    }, 3000);
+  }
+
+  public killHero(): void {
+    if (this.isDead || this.isInvincible) return;
+    this.isDead = true;
+    this.HP -= 1;
+    this.visible = false;
+    this.weapon.setWeapon(1);
+    this.rechargeTime = 200;
+
+    setTimeout(() => {
+      this.respawnHero();
+    }, 1000);
   }
 }

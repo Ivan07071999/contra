@@ -12,6 +12,7 @@ import { BulletFactory } from '../shared/bullets/bulletFactory';
 import { Enemy } from '../entities/enemy';
 import { Tourelle } from '../entities/tourelle';
 import { Boss } from '../entities/boss';
+import { WeaponBooster } from '../shared/weaponBooster';
 
 export class Playground {
   public view: Container;
@@ -29,10 +30,12 @@ export class Playground {
   private playgroundAnimations: PlaygroundAnimations;
   public bullets: Bullet[] = [];
   public enemies: Enemy[] = [];
+  public weaponBoosters: WeaponBooster[] = [];
   public bulletFactory: BulletFactory;
   public hero: Hero;
   public tourellies: Tourelle[] = [];
   public boss: Boss;
+  declare public weaponBooster: WeaponBooster;
 
   constructor(atlasData: ISpriteAtlas) {
     this.view = new Container();
@@ -60,7 +63,17 @@ export class Playground {
     this.addEnemies(atlasData);
     this.addTourellies();
     this.addBoss();
+    this.addWeaponBoosters();
   }
+
+  private addWeaponBoosters(): void {
+    for (const booster of platforms.weaponBoosters) {
+      const item = new WeaponBooster(booster.x, booster.y);
+
+      this.weaponBoosters.push(item);
+      this.view.addChild(item);
+    }
+  };
 
   private addBoss(): void {
     this.view.addChild(this.boss);
@@ -68,7 +81,13 @@ export class Playground {
 
   private addTourellies(): void {
     for (const tourele of platforms.tourelles) {
-      const item = new Tourelle(this.bulletFactory, this.hero, tourele.x, tourele.y, this.playgroundAnimations);
+      const item = new Tourelle(
+        this.bulletFactory,
+        this.hero,
+        tourele.x,
+        tourele.y,
+        this.playgroundAnimations,
+      );
       this.tourellies.push(item);
       this.view.addChild(item);
     }
@@ -139,6 +158,12 @@ export class Playground {
   }
 
   public update(hero: Hero): void {
+    //console.log(this.view.x, this.view.y);
+
+    for (const booster of this.weaponBoosters) {
+      booster.update();
+    }
+
     this.boss.update();
 
     for (const enemy of this.enemies) {
@@ -176,7 +201,6 @@ export class Playground {
 
       this.bridgesPosition.second.hasExploded = true;
     }
-
   }
 
   public get position(): number {

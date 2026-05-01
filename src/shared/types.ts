@@ -60,11 +60,11 @@ export interface IBulletContext {
 }
 
 export interface IKeys {
-  up: { pressed: boolean };
-  down: { pressed: boolean };
-  left: { pressed: boolean };
-  right: { pressed: boolean };
-  jump: { pressed: boolean };
-  fire: { pressed: boolean };
+  up: { pressed: boolean, justPressed: boolean };
+  down: { pressed: boolean, justPressed: boolean };
+  left: { pressed: boolean, justPressed: boolean };
+  right: { pressed: boolean, justPressed: boolean };
+  jump: { pressed: boolean, justPressed: boolean };
+  fire: { pressed: boolean, justPressed: boolean };
 }
 

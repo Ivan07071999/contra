@@ -8,6 +8,7 @@ import type { Bullet } from '../shared/bullets/bullet';
 import type { Tourelle } from '../entities/tourelle';
 import { BossWeapons } from '../shared/bossWeapons';
 import type { BossDoor } from '../shared/bossDoor';
+import type { WeaponBooster } from '../shared/weaponBooster';
 
 export class Collisions {
   public checkCollision(
@@ -73,7 +74,8 @@ export class Collisions {
       if (bullets[i].type !== 'heroBullet') continue;
       for (let j = 0; j < enemies.length; j += 1) {
         if (this.checkCollision(bullets[i], enemies[j])) {
-          enemies[j].removeFromParent();
+          enemies[j].blowUpEnemy();
+          //enemies[j].removeFromParent();
           enemies.splice(j, 1);
           bullets[i].removeFromParent();
           bullets.splice(i, 1);
@@ -134,6 +136,7 @@ export class Collisions {
       if (this.checkCollision(hero, bullets[i])) {
         bullets[i].removeFromParent();
         bullets.splice(i, 1);
+        hero.killHero()
         break;
       }
     }
@@ -143,6 +146,42 @@ export class Collisions {
     for (const enemy of enemies) {
       if (this.checkCollision(hero, enemy)) {
         console.log('Столкновение с врагом');
+      }
+    }
+  }
+
+  public resolveBulletsForBoosterCollisions(boosters: WeaponBooster[], bullets: Bullet[]): void {
+    for (const booster of boosters) {
+      for (let j = 0; j < bullets.length; j += 1) {
+        if (bullets[j].type !== 'heroBullet') continue;
+        if (this.checkCollision(booster, bullets[j])) {
+          if (booster.isDropped) continue;
+          bullets[j].removeFromParent();
+          bullets.splice(j, 1);
+          booster.dropBooster();
+          break;
+        }
+      }
+    }
+  }
+
+  public resolveHeroForBoostersCollisions(hero: Hero, boosters: WeaponBooster[]): void {
+    for (let i = 0; i < boosters.length; i += 1) {
+      if (!boosters[i].isDropped) continue;
+      if (this.checkCollision(hero, boosters[i])) {
+        hero.weapon.setWeapon(2);
+        hero.rechargeTime = 600;
+        boosters[i].removeFromParent();
+        boosters.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  public resolveBoostersForPlatformsCollisions(boosters: WeaponBooster[], platforms: Platform[]): void {
+    for (const booster of boosters) {
+      for (const platform of platforms) {
+        if (this.checkCollision(booster, platform) && booster.isDropped) booster.y = platform.y;
       }
     }
   }

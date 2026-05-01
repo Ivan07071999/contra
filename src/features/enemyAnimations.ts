@@ -16,4 +16,14 @@ export class EnemyAnimations {
 
     return animations;
   }
+
+  public explosionAnimation(): AnimatedSprite {
+    const frames = this.atlasData.animations.explosion as Texture[];
+    const animation = new AnimatedSprite(frames);
+    animation.animationSpeed = 0.3;
+    animation.loop = false;
+    animation.play();
+
+    return animation;
+  }
 }
