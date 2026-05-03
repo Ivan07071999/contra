@@ -72,10 +72,18 @@ export class Game {
   }
 
   private updateCamera(): void {
-    //const heroPosition = -6500
+    //const heroPosition = -4500
     const heroPosition = -this.playground.hero.x + 200;
+    //console.log(this.playground.hero.x, this.playground.view.width);
 
-    if (heroPosition > 0) return;
+    if (this.playground.hero.x >= this.playground.boss.x - this.playground.boss.width * 1.35) {
+      return;
+    }
+
+    //if (heroPosition > 0) return;
+    if (heroPosition > this.playground.position) {
+      return;
+    }
 
     this.playground.position = heroPosition;
     this.background.position = heroPosition;

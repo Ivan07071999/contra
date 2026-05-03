@@ -145,7 +145,7 @@ export class Collisions {
   public resolveEnemyForHeroCollisions(hero: Hero, enemies: Enemy[]) {
     for (const enemy of enemies) {
       if (this.checkCollision(hero, enemy)) {
-        console.log('Столкновение с врагом');
+        hero.killHero();
       }
     }
   }
@@ -181,7 +181,9 @@ export class Collisions {
   public resolveBoostersForPlatformsCollisions(boosters: WeaponBooster[], platforms: Platform[]): void {
     for (const booster of boosters) {
       for (const platform of platforms) {
-        if (this.checkCollision(booster, platform) && booster.isDropped) booster.y = platform.y;
+        if (this.checkCollision(booster, platform) && booster.isDropped) {
+          booster.y = platform.y;
+        };
       }
     }
   }

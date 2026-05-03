@@ -189,6 +189,7 @@ export class Hero extends Container {
     if (!this.isGrounded || this.isSwimming) return;
     this.isGrounded = false;
     this.y += 2;
+    console.log('cghsubdftv');
   }
 
   private updateAnimations(): void {
@@ -246,10 +247,9 @@ export class Hero extends Container {
     this.recharge = now;
   }
 
-  public respawnHero(): void {
+  public respawnHero(vx: number): void {
     this.GRAVITY_FORCE = 0.1;
-    this.visible = true;
-    this.x = 200;
+    this.x = vx;
     this.y = 100;
 
     this.velocityX = 0;
@@ -261,6 +261,7 @@ export class Hero extends Container {
     this.runUp = false;
     this.runDown = false;
     this.runAndShoot = false;
+    this.isSwimming = false;
     this.scale.x = 0.7;
 
     this.visible = true;
@@ -272,15 +273,13 @@ export class Hero extends Container {
   }
 
   public killHero(): void {
+    console.log('kill');
+    //return;
     if (this.isDead || this.isInvincible) return;
     this.isDead = true;
     this.HP -= 1;
     this.visible = false;
     this.weapon.setWeapon(1);
     this.rechargeTime = 200;
-
-    setTimeout(() => {
-      this.respawnHero();
-    }, 1000);
   }
 }

@@ -13,6 +13,7 @@ import { Enemy } from '../entities/enemy';
 import { Tourelle } from '../entities/tourelle';
 import { Boss } from '../entities/boss';
 import { WeaponBooster } from '../shared/weaponBooster';
+import { EndGame } from '../shared/endGame';
 
 export class Playground {
   public view: Container;
@@ -32,13 +33,16 @@ export class Playground {
   public enemies: Enemy[] = [];
   public weaponBoosters: WeaponBooster[] = [];
   public bulletFactory: BulletFactory;
+  private endGame: EndGame;
   public hero: Hero;
   public tourellies: Tourelle[] = [];
   public boss: Boss;
+  private atlasData: ISpriteAtlas;
   declare public weaponBooster: WeaponBooster;
 
   constructor(atlasData: ISpriteAtlas) {
     this.view = new Container();
+    this.atlasData = atlasData;
     this.bridgeContainer = new Container();
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
     this.hero = new Hero(atlasData, this.bulletFactory);
@@ -51,7 +55,7 @@ export class Playground {
 
     this.hero.x = 200;
     this.hero.y = 100;
-    this.boss = new Boss(atlasData, this.bulletFactory);
+    this.boss = new Boss(this.atlasData, this.bulletFactory);
 
     this.view.addChild(this.hero);
 
@@ -60,10 +64,52 @@ export class Playground {
     this.createBridge();
     this.createBoxes();
     this.update(this.hero);
-    this.addEnemies(atlasData);
+    this.addEnemies(this.atlasData);
     this.addTourellies();
     this.addBoss();
     this.addWeaponBoosters();
+    this.endGame = new EndGame(300);
+  }
+
+  private resetPlayground(): void {
+    this.enemies.forEach((enemy) => {
+      enemy.removeFromParent();
+      enemy.destroy();
+    });
+
+    this.tourellies.forEach((tourele) => {
+      tourele.removeFromParent();
+      tourele.destroy();
+    });
+
+    this.weaponBoosters.forEach((booster) => {
+      booster.removeFromParent();
+      booster.destroy();
+    });
+
+    this.boss.removeChildren();
+
+    this.tourellies = [];
+    this.enemies = [];
+    this.weaponBoosters = [];
+    this.bridgeContainer.removeChildren();
+    this.secondBridgeContainer.removeChildren();
+    this.bridgesPosition.first.hasExploded = false;
+    this.bridgesPosition.second.hasExploded = false;
+    this.boss.removeFromParent();
+    this.boss.destroy();
+    this.boss = new Boss(this.atlasData, this.bulletFactory);
+
+    this.addEnemies(this.atlasData);
+    this.addTourellies();
+    this.addWeaponBoosters();
+    this.createBridge();
+    this.addBoss();
+
+    this.hero.HP = 3;
+    this.position = 0;
+    this.hero.x = 200;
+    this.hero.y = 100;
   }
 
   private addWeaponBoosters(): void {
@@ -158,20 +204,46 @@ export class Playground {
   }
 
   public update(hero: Hero): void {
-    //console.log(this.view.x, this.view.y);
+
+    if (this.hero.x < -this.view.x) this.hero.x = -this.view.x;
+    if (this.hero.x >= this.boss.x) this.hero.x = this.boss.x;
+
+    if (this.hero.isDead) {
+      if (this.hero.HP === 0) {
+        this.endGame.x = -this.position + 100;
+        this.view.addChild(this.endGame.gameOver());
+        setTimeout(() => {
+          this.view.removeChild(this.endGame.gameOver());
+          this.resetPlayground();
+          this.hero.respawnHero(200);
+        }, 3000);
+
+        return;
+      }
+      const heroPosition = -this.position + 200;
+      setTimeout(() => {
+        this.view.x = heroPosition;
+        this.hero.respawnHero(heroPosition);
+      }, 1000);
+    };
 
     for (const booster of this.weaponBoosters) {
       booster.update();
     }
 
     this.boss.update();
+    if (this.boss.bossDoor.HP === 0) {
+      console.log(this.position, this.view.x);
+      this.endGame.x = -this.position + 100;
+      this.view.addChild(this.endGame.endGame());
+    };
 
     for (const enemy of this.enemies) {
-      enemy.update();
+      if (enemy.x > this.view.x || enemy.x < -this.view.x) enemy.update();
     }
 
     for (const tourele of this.tourellies) {
-      tourele.update();
+      if (tourele.x > this.hero.x - this.view.x || tourele.x < -this.view.x + this.hero.x) tourele.update();
     }
 
     for (let i = 0; i < this.bullets.length; i += 1) {

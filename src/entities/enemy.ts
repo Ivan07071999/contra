@@ -59,6 +59,7 @@ export class Enemy extends Container {
     explosion.onComplete = () => {
       explosion.removeFromParent();
       explosion.destroy();
+      this.removeFromParent();
     }
 
     this.sprite = explosion;

@@ -54,7 +54,7 @@ export class BulletFactory {
     bullet.x = bulletContext.x;
     bullet.y = bulletContext.y;
     bullet.type = bulletContext.type;
-    bullet.SPEED = Math.random() * -6 - 2;
+    bullet.SPEED = Math.random() * -8 - 2;
 
     const view = new Graphics();
     view.circle(0, 0, 6).fill(0xff2222).circle(-2, -2, 3).fill(0xdddddd);

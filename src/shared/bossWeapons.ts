@@ -103,7 +103,6 @@ export class BossWeapons {
     if (this.bossGunHP[1] === 0) {
       this.secondGunIsDestroy = true;
       this.destroyWeapon(this.gun2, this.bossGun2)
-
     };
   }
 }

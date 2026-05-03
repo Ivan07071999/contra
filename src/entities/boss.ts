@@ -17,7 +17,6 @@ export class Boss extends Container {
     this.animations = new PlaygroundAnimations(atlasData);
     this.bossWeapons = new BossWeapons(this.animations, bulletFactory);
     this.bossDoor = new BossDoor(this.animations);
-
     this.createBoss();
   }
 
