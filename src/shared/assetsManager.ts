@@ -13,7 +13,7 @@ export class AssetsManager {
   public async load(): Promise<void> {
     if (this.initialized) return;
 
-    this.atlasData = await Assets.load<ISpriteAtlas>('/public/atlas.json');
+    this.atlasData = await Assets.load<ISpriteAtlas>('/atlas.json');
 
     this.initialized = true;
   }
