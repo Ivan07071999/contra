@@ -35,6 +35,7 @@ export class Playground {
   public bulletFactory: BulletFactory;
   private endGame: EndGame;
   public hero: Hero;
+  public water: Container;
   public tourellies: Tourelle[] = [];
   public boss: Boss;
   private atlasData: ISpriteAtlas;
@@ -44,6 +45,7 @@ export class Playground {
     this.view = new Container();
     this.atlasData = atlasData;
     this.bridgeContainer = new Container();
+    this.water = new Container();
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
     this.hero = new Hero(atlasData, this.bulletFactory);
     this.secondBridgeContainer = new Container();
@@ -63,7 +65,7 @@ export class Playground {
     this.addWater();
     this.createBridge();
     this.createBoxes();
-    this.update(this.hero);
+    this.update();
     this.addEnemies(this.atlasData);
     this.addTourellies();
     this.addBoss();
@@ -92,6 +94,8 @@ export class Playground {
     this.tourellies = [];
     this.enemies = [];
     this.weaponBoosters = [];
+    this.bridges = [];
+    this.secondBridges = [];
     this.bridgeContainer.removeChildren();
     this.secondBridgeContainer.removeChildren();
     this.bridgesPosition.first.hasExploded = false;
@@ -119,7 +123,7 @@ export class Playground {
       this.weaponBoosters.push(item);
       this.view.addChild(item);
     }
-  };
+  }
 
   private addBoss(): void {
     this.view.addChild(this.boss);
@@ -174,9 +178,10 @@ export class Playground {
     });
 
     tilingSprite.y = 600 - texture.height;
-    tilingSprite.zIndex = 1;
+    this.water.zIndex = 1;
 
-    this.view.addChild(tilingSprite);
+    this.water.addChild(tilingSprite);
+    this.view.addChild(this.water);
   }
 
   private createBridge(): void {
@@ -203,8 +208,7 @@ export class Playground {
     }
   }
 
-  public update(hero: Hero): void {
-
+  public update(): void {
     if (this.hero.x < -this.view.x) this.hero.x = -this.view.x;
     if (this.hero.x >= this.boss.x) this.hero.x = this.boss.x;
 
@@ -225,25 +229,31 @@ export class Playground {
         this.view.x = heroPosition;
         this.hero.respawnHero(heroPosition);
       }, 1000);
-    };
+    }
 
     for (const booster of this.weaponBoosters) {
       booster.update();
+      if (this.hero.x === booster.x) {
+        booster.startLoop = true;
+      }
     }
 
     this.boss.update();
     if (this.boss.bossDoor.HP === 0) {
       console.log(this.position, this.view.x);
       this.endGame.x = -this.position + 100;
+      this.tourellies.forEach((tourele) => {
+        tourele.HP = 0;
+      });
       this.view.addChild(this.endGame.endGame());
-    };
+    }
 
     for (const enemy of this.enemies) {
-      if (enemy.x > this.view.x || enemy.x < -this.view.x) enemy.update();
+      if (Math.abs(this.hero.x - enemy.x) <= 600) enemy.update();
     }
 
     for (const tourele of this.tourellies) {
-      if (tourele.x > this.hero.x - this.view.x || tourele.x < -this.view.x + this.hero.x) tourele.update();
+      if (tourele.x > this.view.x || tourele.x < -this.view.x + this.hero.x) tourele.update();
     }
 
     for (let i = 0; i < this.bullets.length; i += 1) {
@@ -251,7 +261,7 @@ export class Playground {
       this.checkBullet(this.bullets[i], i);
     }
 
-    if (!this.bridgesPosition.first.hasExploded && hero.x >= this.bridgesPosition.first.position) {
+    if (!this.bridgesPosition.first.hasExploded && this.hero.x >= this.bridgesPosition.first.position) {
       this.bridges.forEach((segment, interval) => {
         setTimeout(() => {
           segment.blowUpSegment();
@@ -263,7 +273,7 @@ export class Playground {
 
     if (
       !this.bridgesPosition.second.hasExploded &&
-      hero.x >= this.bridgesPosition.second.position
+      this.hero.x >= this.bridgesPosition.second.position
     ) {
       this.secondBridges.forEach((segment, interval) => {
         setTimeout(() => {

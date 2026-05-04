@@ -26,9 +26,8 @@ export class Boss extends Container {
 
     bossSprite.scale.set(0.7);
     this.scale.set(1.3);
-
     this.position.set(6910, 180);
-    //this.position.set(500, 180);
+
     this.addChild(
       bossSprite,
       this.bossDoor,

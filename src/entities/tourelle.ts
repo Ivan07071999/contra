@@ -28,6 +28,7 @@ export class Tourelle extends Container {
     this.y = y;
     this.target = target;
     this.scale.set(0.7);
+    this.pivot.set(0.5)
 
     this.createTourelle();
   }
@@ -51,12 +52,14 @@ export class Tourelle extends Container {
     this.tourelleGun.rotation = angle;
 
     this.fire(angle);
+
+    if (this.HP === 0) this.destroyTourelle();
   }
 
   private fire(angle: number): void {
     this.recharge += 1;
 
-    if (this.recharge < 50) return;
+    if (this.recharge < 100) return;
 
     const bulletContext: IBulletContext = {
       x: this.x + 20,

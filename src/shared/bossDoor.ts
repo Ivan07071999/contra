@@ -4,7 +4,7 @@ import { PlaygroundAnimations } from "../features/playgroundAnimations";
 export class BossDoor extends Container {
   private animations: PlaygroundAnimations;
   declare public bossDoor: AnimatedSprite;
-  public HP = 5;
+  public HP = 10;
 
   constructor(animations: PlaygroundAnimations) {
     super();

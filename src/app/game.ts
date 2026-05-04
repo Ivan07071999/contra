@@ -36,7 +36,6 @@ export class Game {
     container?.appendChild(this.app.canvas);
     this.background = new Background(this.app);
 
-    //this.playground.view.addChild(this.hero);
     this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
   }
@@ -48,11 +47,11 @@ export class Game {
     };
 
     this.playground.hero.update();
-    this.playground.update(this.playground.hero);
+    this.playground.update();
 
     if (this.playground.hero.y > this.app.screen.height) {
       this.playground.hero.y = this.app.screen.height;
-      this.playground.hero.swimming();
+      if (!this.playground.hero.isSwimming) this.playground.hero.killHero();
     }
 
     this.collisions.resolvePlatformsCollisions(this.playground.hero, this.playground.platforms, prevPoint);
@@ -69,18 +68,16 @@ export class Game {
     this.collisions.resolveBulletsForBoosterCollisions(this.playground.weaponBoosters, this.playground.bullets);
     this.collisions.resolveHeroForBoostersCollisions(this.playground.hero, this.playground.weaponBoosters);
     this.collisions.resolveBoostersForPlatformsCollisions(this.playground.weaponBoosters, this.playground.platforms);
+    this.collisions.checkIsSwimmingCollision(this.playground.hero, this.playground.water);
   }
 
   private updateCamera(): void {
-    //const heroPosition = -4500
     const heroPosition = -this.playground.hero.x + 200;
-    //console.log(this.playground.hero.x, this.playground.view.width);
 
     if (this.playground.hero.x >= this.playground.boss.x - this.playground.boss.width * 1.35) {
       return;
     }
 
-    //if (heroPosition > 0) return;
     if (heroPosition > this.playground.position) {
       return;
     }

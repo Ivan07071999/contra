@@ -133,7 +133,6 @@ export class Hero extends Container {
     this.y += this.velocityY;
     this.flyDown();
     this.updateAnimations();
-    this.isSwimming = false;
   }
 
   public stay(): void {
@@ -189,7 +188,6 @@ export class Hero extends Container {
     if (!this.isGrounded || this.isSwimming) return;
     this.isGrounded = false;
     this.y += 2;
-    console.log('cghsubdftv');
   }
 
   private updateAnimations(): void {
@@ -273,8 +271,6 @@ export class Hero extends Container {
   }
 
   public killHero(): void {
-    console.log('kill');
-    //return;
     if (this.isDead || this.isInvincible) return;
     this.isDead = true;
     this.HP -= 1;

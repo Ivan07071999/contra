@@ -3,28 +3,31 @@ import { Container, Sprite, Texture } from "pixi.js";
 export class WeaponBooster extends Container {
   declare private sprite: Sprite;
   private HORIZONTAL_SPEED = 3;
-  private VERTICAL_SPEED = 1;
-  private DIRECTION_INTERVAL = 50;
+  private DIRECTION_INTERVAL = 150;
   private GRAVITY_FORCE = 0.2;
   private directionY = 1;
   private startPositionY: number;
+  public VERTICAL_SPEED = 1;
+  public previousY = 0;
   public isDropped = false;
+  public startLoop = false;
 
   constructor(x: number, y: number) {
     super();
 
     this.x = x;
     this.y = y;
-    this.startPositionY = x;
+    this.startPositionY = y;
 
     this.createFlyingBooster();
+    this.visible = false;
     this.scale.set(0.7);
   }
 
   private createFlyingBooster(): void {
     const texture = Texture.from('powerup0000');
     this.sprite = new Sprite(texture);
-    this.sprite.anchor.set(0.5, 1)
+    this.sprite.anchor.set(0.5, 1);
     this.addChild(this.sprite);
   }
 
@@ -40,6 +43,11 @@ export class WeaponBooster extends Container {
   }
 
   public update(): void {
+    if (!this.startLoop) return;
+
+    this.visible = true;
+    this.previousY = this.y;
+
     if (this.isDropped) {
       this.HORIZONTAL_SPEED = 0;
       this.directionY = 1;
@@ -48,7 +56,7 @@ export class WeaponBooster extends Container {
       return;
     }
 
-    this.x += this.HORIZONTAL_SPEED * 0;
+    this.x += this.HORIZONTAL_SPEED;
     this.y += this.VERTICAL_SPEED * this.directionY;
 
     if (this.y > this.startPositionY + this.DIRECTION_INTERVAL) {

@@ -23,6 +23,7 @@ export class Bridge extends Container {
 
   public blowUpSegment(): void {
     if (this.isBlowUp) return;
+
     this.removeChild(this.sprite);
 
     const explosion = this.animation.explosionAnimation();

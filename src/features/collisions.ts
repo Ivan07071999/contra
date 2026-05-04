@@ -62,8 +62,10 @@ export class Collisions {
     for (const enemy of enemies) {
       for (const platform of platforms) {
         if (this.checkCollision(enemy, platform)) {
-          enemy.y = platform.y;
-          enemy.stay();
+          if (enemy.previousY <= platform.y) {
+            enemy.y = platform.y;
+            enemy.stay();
+          }
         }
       }
     }
@@ -180,11 +182,23 @@ export class Collisions {
 
   public resolveBoostersForPlatformsCollisions(boosters: WeaponBooster[], platforms: Platform[]): void {
     for (const booster of boosters) {
+      if (!booster.isDropped) continue;
       for (const platform of platforms) {
-        if (this.checkCollision(booster, platform) && booster.isDropped) {
-          booster.y = platform.y;
+        if (this.checkCollision(booster, platform)) {
+          if (booster.previousY <= platform.y) {
+            booster.y = platform.y;
+            booster.VERTICAL_SPEED = 0;
+          }
         };
       }
+    }
+  }
+
+  public checkIsSwimmingCollision(hero: Hero, water: Container): void {
+    if (this.checkCollision(hero, water)) {
+      hero.swimming();
+    } else {
+      hero.isSwimming = false;
     }
   }
 }

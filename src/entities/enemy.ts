@@ -11,6 +11,7 @@ export class Enemy extends Container {
   private velocityY = 0;
   private isGround = false;
   private jumpAttempted = false;
+  public previousY = 0;
 
   constructor(atlasData: ISpriteAtlas, x: number, y: number) {
     super();
@@ -25,6 +26,7 @@ export class Enemy extends Container {
   }
 
   public update(): void {
+    this.previousY = this.y;
     this.x -= this.SPEED;
 
     if (this.velocityY > 0 && !this.jumpAttempted) {
@@ -35,6 +37,11 @@ export class Enemy extends Container {
 
     this.velocityY += this.GRAVITY_FORCE;
     this.y += this.velocityY;
+    if (this.y >= 600 && this.x <= 3550 && this.y >= 0) {
+      this.y = 600;
+    };
+
+    if (this.y > 700 || this.x <= 0) this.removeFromParent();
   }
 
   public stay(): void {
@@ -60,7 +67,7 @@ export class Enemy extends Container {
       explosion.removeFromParent();
       explosion.destroy();
       this.removeFromParent();
-    }
+    };
 
     this.sprite = explosion;
     this.addChild(this.sprite);
