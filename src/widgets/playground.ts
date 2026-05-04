@@ -240,7 +240,6 @@ export class Playground {
 
     this.boss.update();
     if (this.boss.bossDoor.HP === 0) {
-      console.log(this.position, this.view.x);
       this.endGame.x = -this.position + 100;
       this.tourellies.forEach((tourele) => {
         tourele.HP = 0;
