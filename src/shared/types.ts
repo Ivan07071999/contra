@@ -68,3 +68,15 @@ export interface IKeys {
   fire: { pressed: boolean, justPressed: boolean };
 }
 
+export interface ISound {
+  BG: string;
+  FIRE: string;
+  EXPLOSION: string;
+  GAME_OVER: string;
+  VICTORY: string;
+  STAY: string;
+  KILL: string;
+  BULLET_BOUNDS: string;
+  WEAPON_UP: string;
+}
+

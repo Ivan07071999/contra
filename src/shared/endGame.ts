@@ -1,8 +1,8 @@
 import { Container, TextStyle, Text } from 'pixi.js';
 
-export class EndGame extends Container{
+export class EndGame extends Container {
 
-  constructor(vy: number) {
+  constructor( vy: number) {
     super();
     this.y = vy;
     this.zIndex = 1;
@@ -38,7 +38,7 @@ export class EndGame extends Container{
   }
 
   public gameOver(): Container {
-    this.createLabel('GAME OVER')
+    this.createLabel('GAME OVER');
     return this;
-  };
+  }
 }

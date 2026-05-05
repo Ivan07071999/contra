@@ -1,10 +1,11 @@
 import { AnimatedSprite, Container } from 'pixi.js';
-import { EnemyAnimations } from '../features/enemyAnimations';
+import { PlaygroundAnimations } from '../features/playgroundAnimations';
 import type { ISpriteAtlas } from '../shared/types';
+import type { SoundManager } from '../shared/soundManager';
 
 export class Enemy extends Container {
   private sprite: AnimatedSprite;
-  private enemyAnimation: EnemyAnimations;
+  private enemyAnimation: PlaygroundAnimations;
   private GRAVITY_FORCE = 0.2;
   private SPEED = 1;
   private JUMP_FORCE = 5.5;
@@ -13,9 +14,9 @@ export class Enemy extends Container {
   private jumpAttempted = false;
   public previousY = 0;
 
-  constructor(atlasData: ISpriteAtlas, x: number, y: number) {
+  constructor(atlasData: ISpriteAtlas, soundManager: SoundManager, x: number, y: number) {
     super();
-    this.enemyAnimation = new EnemyAnimations(atlasData);
+    this.enemyAnimation = new PlaygroundAnimations(atlasData, soundManager);
     this.sprite = this.enemyAnimation.moveAnimation();
     this.scale.set(0.7);
     this.scale.x = -0.7;

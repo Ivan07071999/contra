@@ -14,6 +14,7 @@ import { Tourelle } from '../entities/tourelle';
 import { Boss } from '../entities/boss';
 import { WeaponBooster } from '../shared/weaponBooster';
 import { EndGame } from '../shared/endGame';
+import { SoundManager } from '../shared/soundManager';
 
 export class Playground {
   public view: Container;
@@ -40,16 +41,18 @@ export class Playground {
   public boss: Boss;
   private atlasData: ISpriteAtlas;
   declare public weaponBooster: WeaponBooster;
+  private soundManager: SoundManager;
 
-  constructor(atlasData: ISpriteAtlas) {
+  constructor(atlasData: ISpriteAtlas, soundManager: SoundManager) {
     this.view = new Container();
     this.atlasData = atlasData;
     this.bridgeContainer = new Container();
+    this.soundManager = soundManager;
     this.water = new Container();
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
-    this.hero = new Hero(atlasData, this.bulletFactory);
+    this.hero = new Hero(atlasData, this.bulletFactory, this.soundManager);
     this.secondBridgeContainer = new Container();
-    this.playgroundAnimations = new PlaygroundAnimations(atlasData);
+    this.playgroundAnimations = new PlaygroundAnimations(atlasData, this.soundManager);
     this.bridgesPosition = {
       first: { position: 1620, hasExploded: false },
       second: { position: 2260, hasExploded: false },
@@ -58,6 +61,7 @@ export class Playground {
     this.hero.x = 200;
     this.hero.y = 100;
     this.boss = new Boss(this.atlasData, this.bulletFactory);
+    this.endGame = new EndGame(300);
 
     this.view.addChild(this.hero);
 
@@ -70,7 +74,7 @@ export class Playground {
     this.addTourellies();
     this.addBoss();
     this.addWeaponBoosters();
-    this.endGame = new EndGame(300);
+    this.soundManager.playBgMusic();
   }
 
   private resetPlayground(): void {
@@ -119,7 +123,6 @@ export class Playground {
   private addWeaponBoosters(): void {
     for (const booster of platforms.weaponBoosters) {
       const item = new WeaponBooster(booster.x, booster.y);
-
       this.weaponBoosters.push(item);
       this.view.addChild(item);
     }
@@ -145,7 +148,7 @@ export class Playground {
 
   private addEnemies(atlasData: ISpriteAtlas): void {
     for (const enemy of platforms.enemies) {
-      const item = new Enemy(atlasData, enemy.x, enemy.y);
+      const item = new Enemy(atlasData, this.soundManager, enemy.x, enemy.y);
       this.view.addChild(item);
       this.enemies.push(item);
     }
@@ -216,6 +219,7 @@ export class Playground {
       if (this.hero.HP === 0) {
         this.endGame.x = -this.position + 100;
         this.view.addChild(this.endGame.gameOver());
+
         setTimeout(() => {
           this.view.removeChild(this.endGame.gameOver());
           this.resetPlayground();
@@ -225,6 +229,7 @@ export class Playground {
         return;
       }
       const heroPosition = -this.position + 200;
+
       setTimeout(() => {
         this.view.x = heroPosition;
         this.hero.respawnHero(heroPosition);
@@ -233,17 +238,18 @@ export class Playground {
 
     for (const booster of this.weaponBoosters) {
       booster.update();
-      if (this.hero.x === booster.x) {
-        booster.startLoop = true;
-      }
+      if (this.hero.x === booster.x) booster.startLoop = true;
+      if (booster.y > 600) booster.removeFromParent();
     }
 
     this.boss.update();
+
     if (this.boss.bossDoor.HP === 0) {
       this.endGame.x = -this.position + 100;
       this.tourellies.forEach((tourele) => {
         tourele.HP = 0;
       });
+
       this.view.addChild(this.endGame.endGame());
     }
 
@@ -260,7 +266,10 @@ export class Playground {
       this.checkBullet(this.bullets[i], i);
     }
 
-    if (!this.bridgesPosition.first.hasExploded && this.hero.x >= this.bridgesPosition.first.position) {
+    if (
+      !this.bridgesPosition.first.hasExploded &&
+      this.hero.x >= this.bridgesPosition.first.position
+    ) {
       this.bridges.forEach((segment, interval) => {
         setTimeout(() => {
           segment.blowUpSegment();

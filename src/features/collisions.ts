@@ -9,8 +9,15 @@ import type { Tourelle } from '../entities/tourelle';
 import { BossWeapons } from '../shared/bossWeapons';
 import type { BossDoor } from '../shared/bossDoor';
 import type { WeaponBooster } from '../shared/weaponBooster';
+import type { SoundManager } from '../shared/soundManager';
 
 export class Collisions {
+  private soundManager: SoundManager;
+
+  constructor(soundManager: SoundManager) {
+    this.soundManager = soundManager;
+  }
+
   public checkCollision(
     firstContainer: Rectangle | Container,
     secondContainer: Rectangle | Container,
@@ -95,6 +102,7 @@ export class Collisions {
           bullets[i].removeFromParent();
           bullets.splice(i, 1);
           tourellies[j].HP -= 1;
+          this.soundManager.playSound(this.soundManager.soundKeys.BULLET_BOUNDS);
 
           if (tourellies[j].HP === 0) {
             tourellies[j].destroyTourelle();
@@ -114,6 +122,7 @@ export class Collisions {
           bullets[i].removeFromParent();
           bullets.splice(i, 1);
           bossWeapons.bossGunHP[j] -= 1;
+          this.soundManager.playSound(this.soundManager.soundKeys.BULLET_BOUNDS);
           break;
         }
       }
@@ -127,6 +136,7 @@ export class Collisions {
         bullets[i].removeFromParent();
         bullets.splice(i, 1);
         bossDoor.HP -= 1;
+        this.soundManager.playSound(this.soundManager.soundKeys.BULLET_BOUNDS);
         break;
       }
     }
@@ -160,6 +170,7 @@ export class Collisions {
           if (booster.isDropped) continue;
           bullets[j].removeFromParent();
           bullets.splice(j, 1);
+          this.soundManager.playSound(this.soundManager.soundKeys.BULLET_BOUNDS);
           booster.dropBooster();
           break;
         }
@@ -175,6 +186,7 @@ export class Collisions {
         hero.rechargeTime = 600;
         boosters[i].removeFromParent();
         boosters.splice(i, 1);
+        this.soundManager.playSound(this.soundManager.soundKeys.WEAPON_UP);
         break;
       }
     }

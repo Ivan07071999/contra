@@ -3,6 +3,7 @@ import { HeroAnimations } from '../features/heroAnimation';
 import type { IBulletContext, ISpriteAtlas } from '../shared/types';
 import type { BulletFactory } from '../shared/bullets/bulletFactory';
 import { Weapon } from '../shared/weapon';
+import type { SoundManager } from '../shared/soundManager';
 
 export class Hero extends Container {
   private heroAnimations: HeroAnimations;
@@ -31,28 +32,26 @@ export class Hero extends Container {
   private bulletFactory: BulletFactory;
   private currentAnimateState = 'stay';
   declare private bulletAngle: number;
+  private soundManager: SoundManager;
   public bulletPosition: IBulletContext = {
     x: 0,
     y: 0,
     angle: 0,
     type: 'heroBullet',
   };
-  private bulletPointShift = {
-    x: 0,
-    y: 0,
-  };
+  private bulletPointShift = { x: 0, y: 0 };
 
-  constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory) {
+  constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory, soundManager: SoundManager) {
     super();
     this.bulletFactory = bulletFactory;
+    this.soundManager = soundManager;
     this.weapon = new Weapon(this.bulletFactory);
     this.heroAnimations = new HeroAnimations(atlasData);
     this.hero = new Sprite(Texture.WHITE);
     this.setAnimation('jump');
-
-    this.addChild(this.hero);
     this.scale.set(0.7);
     this.zIndex = 1;
+    this.addChild(this.hero);
   }
 
   private setBulletPointShift(x: number, y: number): void {
@@ -231,7 +230,6 @@ export class Hero extends Container {
   }
 
   public setBulletAngle(angle: number): void {
-    //console.log(angle);
     this.bulletAngle = angle;
   }
 
@@ -240,8 +238,8 @@ export class Hero extends Container {
     const now = Date.now();
     if (now - this.recharge < this.rechargeTime) return;
 
-    //this.bulletFactory.createBullet(this.bulletContext);
     this.weapon.currentGun(this.bulletContext);
+    this.soundManager.playSound(this.soundManager.soundKeys.FIRE);
     this.recharge = now;
   }
 
@@ -274,6 +272,8 @@ export class Hero extends Container {
     if (this.isDead || this.isInvincible) return;
     this.isDead = true;
     this.HP -= 1;
+    if (this.HP === 0) this.soundManager.playSound(this.soundManager.soundKeys.GAME_OVER);
+    this.soundManager.playSound(this.soundManager.soundKeys.KILL);
     this.visible = false;
     this.weapon.setWeapon(1);
     this.rechargeTime = 200;

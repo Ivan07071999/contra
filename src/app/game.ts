@@ -5,6 +5,7 @@ import { Collisions } from '../features/collisions';
 import { Controller } from '../features/controller';
 import { Background } from '../widgets/background';
 import type { ISpriteAtlas } from '../shared/types';
+import { SoundManager } from '../shared/soundManager';
 
 export class Game {
   private app: Application;
@@ -13,12 +14,14 @@ export class Game {
   private playground: Playground;
   private collisions: Collisions;
   private controller: Controller;
+  private readonly soundManager: SoundManager;
 
   constructor(atlasData: ISpriteAtlas) {
     this.app = new Application();
     this.atlasData = atlasData;
-    this.playground = new Playground(this.atlasData);
-    this.collisions = new Collisions();
+    this.soundManager = SoundManager.getInstance();
+    this.playground = new Playground(this.atlasData, this.soundManager);
+    this.collisions = new Collisions(this.soundManager);
     this.controller = new Controller(this.playground.hero);
   }
 
