@@ -6,23 +6,26 @@ import { Controller } from '../features/controller';
 import { Background } from '../widgets/background';
 import type { ISpriteAtlas } from '../shared/types';
 import { SoundManager } from '../shared/soundManager';
+import { StartScreen } from '../entities/startScreen';
 
 export class Game {
   private app: Application;
-  private atlasData: ISpriteAtlas;
+  private startScreen: StartScreen;
+  declare private atlasData: ISpriteAtlas;
   declare private background: Background;
-  private playground: Playground;
-  private collisions: Collisions;
-  private controller: Controller;
-  private readonly soundManager: SoundManager;
+  declare private playground: Playground;
+  declare private collisions: Collisions;
+  declare private controller: Controller;
+  declare private soundManager: SoundManager;
 
   constructor(atlasData: ISpriteAtlas) {
+    this.startScreen = new StartScreen();
     this.app = new Application();
     this.atlasData = atlasData;
-    this.soundManager = SoundManager.getInstance();
-    this.playground = new Playground(this.atlasData, this.soundManager);
-    this.collisions = new Collisions(this.soundManager);
-    this.controller = new Controller(this.playground.hero);
+    // this.soundManager = SoundManager.getInstance();
+    // this.playground = new Playground(this.atlasData, this.soundManager);
+    // this.collisions = new Collisions(this.soundManager);
+    // this.controller = new Controller(this.playground.hero);
   }
 
   public async init(): Promise<void> {
@@ -37,8 +40,35 @@ export class Game {
 
     const container = document.querySelector('#app');
     container?.appendChild(this.app.canvas);
-    this.background = new Background(this.app);
+    //this.background = new Background(this.app);
 
+    this.startScreen.startButton.on('pointerdown', () => {
+      // let audioCtx;
+
+      // audioCtx ??= new (window.AudioContext)();
+      // if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {
+      //   console.error('ERROR')
+      // });
+      // console.log('Контекст:', audioCtx.state);
+      this.startGame();
+    });
+
+    this.app.stage.addChild(this.startScreen);
+
+    //this.app.stage.addChild(this.background.view, this.playground.view);
+    //this.startLoop();
+  }
+
+  private startGame(): void {
+    this.soundManager = SoundManager.getInstance();
+    this.playground = new Playground(this.atlasData, this.soundManager);
+    this.collisions = new Collisions(this.soundManager);
+    this.controller = new Controller(this.playground.hero);
+    this.soundManager.init();
+    this.soundManager.playBgMusic();
+    this.background = new Background(this.app);
+    this.app.stage.removeChild(this.startScreen);
+    this.startScreen.destroy();
     this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
   }
@@ -57,20 +87,48 @@ export class Game {
       if (!this.playground.hero.isSwimming) this.playground.hero.killHero();
     }
 
-    this.collisions.resolvePlatformsCollisions(this.playground.hero, this.playground.platforms, prevPoint);
-    this.collisions.resolveEnemiesCollisions(this.playground.enemies, this.playground.platforms )
+    this.collisions.resolvePlatformsCollisions(
+      this.playground.hero,
+      this.playground.platforms,
+      prevPoint,
+    );
+    this.collisions.resolveEnemiesCollisions(this.playground.enemies, this.playground.platforms);
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.boxes);
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.bridges);
     this.collisions.resolveBoxesCollisions(this.playground.hero, this.playground.secondBridges);
-    this.collisions.resolveBulletsForEnemiesCollisions(this.playground.bullets, this.playground.enemies);
-    this.collisions.resolveBulletsForTourelliesCollisions(this.playground.bullets, this.playground.tourellies);
-    this.collisions.resolveBulletsForBossGunCollision(this.playground.boss.bossWeapons, this.playground.bullets);
-    this.collisions.resolveBossDoorCollision(this.playground.boss.bossDoor, this.playground.bullets);
-    this.collisions.resolveEnemyBulletsForHeroCollisions(this.playground.hero, this.playground.bullets);
+    this.collisions.resolveBulletsForEnemiesCollisions(
+      this.playground.bullets,
+      this.playground.enemies,
+    );
+    this.collisions.resolveBulletsForTourelliesCollisions(
+      this.playground.bullets,
+      this.playground.tourellies,
+    );
+    this.collisions.resolveBulletsForBossGunCollision(
+      this.playground.boss.bossWeapons,
+      this.playground.bullets,
+    );
+    this.collisions.resolveBossDoorCollision(
+      this.playground.boss.bossDoor,
+      this.playground.bullets,
+    );
+    this.collisions.resolveEnemyBulletsForHeroCollisions(
+      this.playground.hero,
+      this.playground.bullets,
+    );
     this.collisions.resolveEnemyForHeroCollisions(this.playground.hero, this.playground.enemies);
-    this.collisions.resolveBulletsForBoosterCollisions(this.playground.weaponBoosters, this.playground.bullets);
-    this.collisions.resolveHeroForBoostersCollisions(this.playground.hero, this.playground.weaponBoosters);
-    this.collisions.resolveBoostersForPlatformsCollisions(this.playground.weaponBoosters, this.playground.platforms);
+    this.collisions.resolveBulletsForBoosterCollisions(
+      this.playground.weaponBoosters,
+      this.playground.bullets,
+    );
+    this.collisions.resolveHeroForBoostersCollisions(
+      this.playground.hero,
+      this.playground.weaponBoosters,
+    );
+    this.collisions.resolveBoostersForPlatformsCollisions(
+      this.playground.weaponBoosters,
+      this.playground.platforms,
+    );
     this.collisions.checkIsSwimmingCollision(this.playground.hero, this.playground.water);
   }
 

@@ -26,7 +26,9 @@ export class Hero extends Container {
   private isFlipped = false;
   public runAndShoot = false;
   public isDead = false;
+  private swimmingFire = true;
   private isInvincible = false;
+  public isDiving = false;
   declare private recharge: number;
   public rechargeTime = 200;
   private bulletFactory: BulletFactory;
@@ -66,14 +68,14 @@ export class Hero extends Container {
 
     this.removeChild(this.hero);
 
-    if (this.hero instanceof AnimatedSprite) {
-      this.hero.stop();
-    }
+    // if (this.hero instanceof AnimatedSprite) {
+    //   this.hero.stop();
+    // }
 
     switch (state) {
       case 'stay':
         this.hero = this.heroAnimations.stayAnimation();
-        this.setBulletPointShift(50, -45);
+        this.setBulletPointShift(32, -42);
         break;
       case 'lay':
         this.hero = this.heroAnimations.layAnimation();
@@ -81,7 +83,6 @@ export class Hero extends Container {
         break;
       case 'run':
         this.hero = this.heroAnimations.moveAnimation();
-        this.setBulletPointShift(50, -45);
         break;
       case 'jump':
         this.hero = this.heroAnimations.jumpAnimation();
@@ -97,14 +98,14 @@ export class Hero extends Container {
         break;
       case 'stayUp':
         this.hero = this.heroAnimations.stayUpAnimation();
-        this.setBulletPointShift(10, -95);
+        this.setBulletPointShift(10, -90);
         break;
       case 'runAndShoot':
         this.hero = this.heroAnimations.runShootAnimation();
-        this.setBulletPointShift(50, -45);
+        this.setBulletPointShift(43, -42);
         break;
       default:
-        this.hero = this.heroAnimations.stayAnimation();
+        //this.hero = this.heroAnimations.stayAnimation();
     }
 
     if (this.hero instanceof Sprite || this.hero instanceof AnimatedSprite) {
@@ -144,7 +145,29 @@ export class Hero extends Container {
     this.isGrounded = true;
   }
 
+  public setDiving(state: boolean): void {
+    if (!this.isSwimming) {
+      this.isDiving = false;
+      this.visible = true;
+      return;
+    }
+
+    this.isDiving = state;
+
+    if (this.isDiving) {
+      this.isInvincible = true;
+      this.visible = false;
+      this.swimmingFire = false;
+      this.stop();
+    } else {
+      this.isInvincible = false;
+      this.visible = true;
+      this.swimmingFire = true;
+    }
+  }
+
   public moveLeft(): void {
+    if (this.isDiving) return;
     this.isLie = false;
     this.movement.x = -1;
     this.scale.x = -0.7;
@@ -152,6 +175,7 @@ export class Hero extends Container {
   }
 
   public moveRight(): void {
+    if (this.isDiving) return;
     this.isLie = false;
     this.movement.x = 1;
     this.scale.x = 0.7;
@@ -190,6 +214,7 @@ export class Hero extends Container {
   }
 
   private updateAnimations(): void {
+    if (!this.visible) return;
     let state = 'stay';
 
     if (this.isLie) {
@@ -234,7 +259,8 @@ export class Hero extends Container {
   }
 
   public fire(): void {
-    if (this.isDead) return;
+    if (this.isDead || !this.swimmingFire) return;
+
     const now = Date.now();
     if (now - this.recharge < this.rechargeTime) return;
 
@@ -254,6 +280,7 @@ export class Hero extends Container {
     this.isDead = false;
     this.isGrounded = false;
     this.isLie = false;
+    this.isFlipped = false;
     this.runUp = false;
     this.runDown = false;
     this.runAndShoot = false;

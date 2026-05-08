@@ -14,6 +14,7 @@ export class AssetsManager {
     if (this.initialized) return;
 
     this.atlasData = await Assets.load<ISpriteAtlas>('/atlas.json');
+    await Assets.load({ alias: 'startScreen', src: '/startScreen.jpg' });
 
     this.initialized = true;
   }

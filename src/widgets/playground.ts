@@ -60,7 +60,7 @@ export class Playground {
 
     this.hero.x = 200;
     this.hero.y = 100;
-    this.boss = new Boss(this.atlasData, this.bulletFactory);
+    this.boss = new Boss(this.atlasData, this.bulletFactory, this.soundManager);
     this.endGame = new EndGame(300);
 
     this.view.addChild(this.hero);
@@ -74,7 +74,7 @@ export class Playground {
     this.addTourellies();
     this.addBoss();
     this.addWeaponBoosters();
-    this.soundManager.playBgMusic();
+    //this.soundManager.playBgMusic();
   }
 
   private resetPlayground(): void {
@@ -106,7 +106,7 @@ export class Playground {
     this.bridgesPosition.second.hasExploded = false;
     this.boss.removeFromParent();
     this.boss.destroy();
-    this.boss = new Boss(this.atlasData, this.bulletFactory);
+    this.boss = new Boss(this.atlasData, this.bulletFactory, this.soundManager);
 
     this.addEnemies(this.atlasData);
     this.addTourellies();
@@ -217,7 +217,7 @@ export class Playground {
 
     if (this.hero.isDead) {
       if (this.hero.HP === 0) {
-        this.endGame.x = -this.position + 100;
+        this.endGame.x = -this.position + (800 - this.endGame.width) / 2;
         this.view.addChild(this.endGame.gameOver());
 
         setTimeout(() => {
@@ -236,10 +236,13 @@ export class Playground {
       }, 1000);
     }
 
-    for (const booster of this.weaponBoosters) {
-      booster.update();
-      if (this.hero.x === booster.x) booster.startLoop = true;
-      if (booster.y > 600) booster.removeFromParent();
+    for (let i = 0; i < this.weaponBoosters.length; i +=1) {
+      this.weaponBoosters[i].update();
+      if (this.hero.x === this.weaponBoosters[i].x) this.weaponBoosters[i].startLoop = true;
+      if (this.weaponBoosters[i].y > this.view.height || this.weaponBoosters[i].x > this.boss.x) {
+        this.weaponBoosters[i].removeFromParent();
+        this.weaponBoosters.splice(i, 1);
+      };
     }
 
     this.boss.update();
@@ -254,7 +257,7 @@ export class Playground {
     }
 
     for (const enemy of this.enemies) {
-      if (Math.abs(this.hero.x - enemy.x) <= 600) enemy.update();
+      if (Math.abs(this.hero.x - enemy.x) <= 800) enemy.update();
     }
 
     for (const tourele of this.tourellies) {

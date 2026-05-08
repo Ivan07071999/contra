@@ -5,6 +5,7 @@ export class BossDoor extends Container {
   private animations: PlaygroundAnimations;
   declare public bossDoor: AnimatedSprite;
   public HP = 10;
+  private isDead = false;
 
   constructor(animations: PlaygroundAnimations) {
     super();
@@ -44,6 +45,10 @@ export class BossDoor extends Container {
   }
 
   public update(): void {
-    if (this.HP === 0) this.destroyDoor();
+    if (this.isDead) return;
+    if (this.HP === 0) {
+      this.isDead = true;
+      this.destroyDoor()
+    };
   }
 }

@@ -17,12 +17,12 @@ export class Controller {
   constructor(hero: Hero) {
     this.hero = hero;
     this.keys = {
-      up: { pressed: false, justPressed: false },
-      down: { pressed: false, justPressed: false },
-      left: { pressed: false, justPressed: false },
-      right: { pressed: false, justPressed: false },
-      jump: { pressed: false, justPressed: false },
-      fire: { pressed: false, justPressed: false },
+      up: { pressed: false },
+      down: { pressed: false },
+      left: { pressed: false },
+      right: { pressed: false },
+      jump: { pressed: false },
+      fire: { pressed: false },
     };
 
     window.addEventListener('keydown', (event) => {
@@ -59,6 +59,7 @@ export class Controller {
       this.hero.runUp = true;
       this.hero.setBulletAngle(-45);
     } else if (this.keys.down.pressed && (this.keys.left.pressed || this.keys.right.pressed)) {
+      if (this.hero.isDiving) return;
       this.hero.runDown = true;
       this.hero.setBulletAngle(45);
     } else if (this.keys.up.pressed) {
@@ -82,6 +83,12 @@ export class Controller {
       this.hero.moveRight();
     } else {
       this.hero.stop();
+    }
+
+    if (this.hero.isSwimming && this.keys.down.pressed) {
+      this.hero.setDiving(true);
+    } else {
+      this.hero.setDiving(false);
     }
 
     if (this.keys.down.pressed && !this.keys.left.pressed && !this.keys.right.pressed) {

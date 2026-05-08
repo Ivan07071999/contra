@@ -19,14 +19,14 @@ export class SoundManager {
       WEAPON_UP: 'weaponUp',
     };
 
-    this.init();
+    //this.init();
   }
 
   public init(): void {
     sound.add(this.soundKeys.BG, {
       url: '/Rick_Astley_-_Never_Gonna_Give_You_Up_8-Bit_Cover_(SkySound.cc).mp3',
       loop: true,
-      volume: 0.07,
+      volume: 0.1,
     });
 
     sound.add(this.soundKeys.FIRE, { url: '/contra-sfx-10.mp3', volume: 0.2 });
@@ -36,7 +36,7 @@ export class SoundManager {
     sound.add(this.soundKeys.STAY, { url: '/contra-sfx-19.mp3', volume: 0.2 });
     sound.add(this.soundKeys.EXPLOSION, { url: '/contra-sfx-9.mp3', volume: 0.2 });
     sound.add(this.soundKeys.BULLET_BOUNDS, { url: '/contra-sfx-15.mp3', volume: 0.2 });
-    sound.add(this.soundKeys.WEAPON_UP, { url: '/contra-sfx-27.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.WEAPON_UP, { url: '/contra-sfx-27.mp3', volume: 0.3 });
   }
 
   public static getInstance(): SoundManager {

@@ -5,16 +5,17 @@ import { PlaygroundAnimations } from "../features/playgroundAnimations";
 import { BossWeapons } from "../shared/bossWeapons";
 import { BossDoor } from "../shared/bossDoor";
 import type { BulletFactory } from "../shared/bullets/bulletFactory";
+import type { SoundManager } from "../shared/soundManager";
 
 export class Boss extends Container {
   private animations: PlaygroundAnimations;
   public bossWeapons: BossWeapons;
   public bossDoor: BossDoor;
 
-  constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory) {
+  constructor(atlasData: ISpriteAtlas, bulletFactory: BulletFactory, soundManager: SoundManager) {
     super();
 
-    this.animations = new PlaygroundAnimations(atlasData);
+    this.animations = new PlaygroundAnimations(atlasData, soundManager);
     this.bossWeapons = new BossWeapons(this.animations, bulletFactory);
     this.bossDoor = new BossDoor(this.animations);
     this.createBoss();

@@ -95,11 +95,13 @@ export class BossWeapons {
 
   public update(): void {
     this.fire();
+    if (this.firstGunIsDestroy) return;
     if (this.bossGunHP[0] === 0) {
       this.firstGunIsDestroy = true;
-      this.destroyWeapon(this.gun, this.bossGun)
+      this.destroyWeapon(this.gun, this.bossGun);
     };
 
+    if (this.secondGunIsDestroy) return;
     if (this.bossGunHP[1] === 0) {
       this.secondGunIsDestroy = true;
       this.destroyWeapon(this.gun2, this.bossGun2)
