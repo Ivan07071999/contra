@@ -27,6 +27,7 @@ export class Hero extends Container {
   public runAndShoot = false;
   public isDead = false;
   private swimmingFire = true;
+  private isShooting = false;
   private isInvincible = false;
   public isDiving = false;
   declare private recharge: number;
@@ -64,13 +65,17 @@ export class Hero extends Container {
   private setAnimation(state: string): void {
     if (this.currentAnimateState === state) return;
 
+    if (this.currentAnimateState === 'runAndShoot' && state === 'run') {
+      if (!this.isShooting) {
+        state = 'run';
+      } else {
+        return;
+      }
+    }
+
     this.currentAnimateState = state;
 
     this.removeChild(this.hero);
-
-    // if (this.hero instanceof AnimatedSprite) {
-    //   this.hero.stop();
-    // }
 
     switch (state) {
       case 'stay':
@@ -105,16 +110,16 @@ export class Hero extends Container {
         this.setBulletPointShift(43, -42);
         break;
       default:
-        //this.hero = this.heroAnimations.stayAnimation();
+        this.hero = this.heroAnimations.stayAnimation();
     }
 
     if (this.hero instanceof Sprite || this.hero instanceof AnimatedSprite) {
       this.hero.anchor.set(0.5, 1);
     }
 
-    //this.hero.anchor.set(0.5, 1);
     this.hero.position.set(0, 0);
     this.addChild(this.hero);
+
   }
 
   public update(): void {
@@ -259,7 +264,9 @@ export class Hero extends Container {
   }
 
   public fire(): void {
+    //console.log(this.isDead, this.swimmingFire);
     if (this.isDead || !this.swimmingFire) return;
+    this.isShooting = true;
 
     const now = Date.now();
     if (now - this.recharge < this.rechargeTime) return;
@@ -267,6 +274,10 @@ export class Hero extends Container {
     this.weapon.currentGun(this.bulletContext);
     this.soundManager.playSound(this.soundManager.soundKeys.FIRE);
     this.recharge = now;
+
+    setTimeout(() => {
+      this.isShooting = false;
+    }, 2000);
   }
 
   public respawnHero(vx: number): void {
@@ -285,6 +296,7 @@ export class Hero extends Container {
     this.runDown = false;
     this.runAndShoot = false;
     this.isSwimming = false;
+    this.swimmingFire = true;
     this.scale.x = 0.7;
 
     this.visible = true;

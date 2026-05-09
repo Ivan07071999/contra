@@ -14,6 +14,7 @@ export class TextureCreator {
     }
 
     graphic.fill({ color: 0xffffff });
+
     const texture = app.renderer.generateTexture(graphic);
     const stars = new TilingSprite({
       texture: texture,
