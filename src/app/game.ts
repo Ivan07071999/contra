@@ -16,12 +16,13 @@ export class Game {
   declare private playground: Playground;
   declare private collisions: Collisions;
   declare private controller: Controller;
-  declare private soundManager: SoundManager;
+  private soundManager: SoundManager | undefined;
 
   constructor(atlasData: ISpriteAtlas) {
     this.startScreen = new StartScreen();
     this.app = new Application();
     this.atlasData = atlasData;
+    //this.startGame();
     // this.soundManager = SoundManager.getInstance();
     // this.playground = new Playground(this.atlasData, this.soundManager);
     // this.collisions = new Collisions(this.soundManager);
@@ -64,7 +65,8 @@ export class Game {
     this.playground = new Playground(this.atlasData, this.soundManager);
     this.collisions = new Collisions(this.soundManager);
     this.controller = new Controller(this.playground.hero);
-    this.soundManager.init();
+    this.soundManager.initAudioContext();
+    //window.addEventListener('load', this.soundManager.ctx);
     this.soundManager.playBgMusic();
     this.background = new Background(this.app);
     this.app.stage.removeChild(this.startScreen);
