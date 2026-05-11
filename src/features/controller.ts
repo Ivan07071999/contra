@@ -1,20 +1,14 @@
 import type { Hero } from "../entities/hero";
+import { KeysSwitcher } from "../shared/keysSwitcher";
 import type { IKeys } from "../shared/types";
 
-export const keyMap: Record<string, keyof IKeys | undefined> = {
-  ArrowUp: 'up',
-  ArrowLeft: 'left',
-  ArrowRight: 'right',
-  ArrowDown: 'down',
-  KeyA: 'fire',
-  KeyS: 'jump',
-};
-
 export class Controller {
+  private keysSwitcher: KeysSwitcher;
   public keys: IKeys;
   public hero: Hero;
 
-  constructor(hero: Hero) {
+  constructor(hero: Hero, keysSwitcher: KeysSwitcher) {
+    this.keysSwitcher = keysSwitcher;
     this.hero = hero;
     this.keys = {
       up: { pressed: false },
@@ -35,17 +29,13 @@ export class Controller {
   }
 
   private handleKeyDown(event: KeyboardEvent): void {
-    const key = keyMap[event.code];
-
-    if (!key) return;
+    const key = this.keysSwitcher.keys[event.code];
 
     this.keys[key].pressed = true;
   }
 
   private handleKeyUp(event: KeyboardEvent): void {
-    const key = keyMap[event.code];
-
-    if (!key) return;
+    const key = this.keysSwitcher.keys[event.code];
 
     this.keys[key].pressed = false;
   }

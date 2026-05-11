@@ -80,3 +80,11 @@ export interface ISound {
   WEAPON_UP: string;
 }
 
+export interface IKeysControl {
+  up: string;
+  down: string;
+  left: string;
+  right: string;
+  jump: string;
+  fire: string;
+}

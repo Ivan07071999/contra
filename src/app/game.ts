@@ -6,7 +6,11 @@ import { Controller } from '../features/controller';
 import { Background } from '../widgets/background';
 import type { ISpriteAtlas } from '../shared/types';
 import { SoundManager } from '../shared/soundManager';
-import { StartScreen } from '../entities/startScreen';
+import { StartScreen } from '../pages/startScreen';
+import { KeysSwitcher } from '../shared/keysSwitcher';
+import { Options } from '../pages/options';
+import { UIElements } from '../shared/uiElements';
+import { Panel } from '../entities/panel';
 
 export class Game {
   private app: Application;
@@ -17,11 +21,19 @@ export class Game {
   declare private collisions: Collisions;
   declare private controller: Controller;
   declare private soundManager: SoundManager;
+  declare private keysSwitcher: KeysSwitcher;
+  private UIElements: UIElements
+  private options: Options;
+  private panel: Panel;
 
   constructor(atlasData: ISpriteAtlas) {
-    this.startScreen = new StartScreen();
-    this.app = new Application();
     this.atlasData = atlasData;
+    this.UIElements = new UIElements();
+    this.app = new Application();
+    this.startScreen = new StartScreen(this.UIElements, this.startGame, this.openOptions);
+    this.keysSwitcher = new KeysSwitcher();
+    this.options = new Options(this.keysSwitcher, this.UIElements, this.openStartScreen);
+    this.panel = new Panel(this.keysSwitcher, this.UIElements);
     // this.soundManager = SoundManager.getInstance();
     // this.playground = new Playground(this.atlasData, this.soundManager);
     // this.collisions = new Collisions(this.soundManager);
@@ -40,30 +52,32 @@ export class Game {
 
     const container = document.querySelector('#app');
     container?.appendChild(this.app.canvas);
+    //this.openStartScreen();
+    this.openOptions();
     //this.background = new Background(this.app);
-
-    this.startScreen.startButton.on('pointerdown', () => {
-      // let audioCtx;
-
-      // audioCtx ??= new (window.AudioContext)();
-      // if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {
-      //   console.error('ERROR')
-      // });
-      // console.log('Контекст:', audioCtx.state);
-      this.startGame();
-    });
-
-    this.app.stage.addChild(this.startScreen);
 
     //this.app.stage.addChild(this.background.view, this.playground.view);
     //this.startLoop();
   }
 
-  private startGame(): void {
+  private openOptions = (): void => {
+    console.log('OPEN OPTIONS');
+    this.startScreen.removeFromParent();
+    this.app.stage.addChild(this.options);
+    this.options.createInputs();
+  };
+
+  private openStartScreen = (): void => {
+    this.app.stage.removeChildren();
+    this.app.stage.addChild(this.startScreen);
+  }
+
+  private startGame = (): void => {
     this.soundManager = SoundManager.getInstance();
+    //this.keysSwitcher = new KeysSwitcher();
     this.playground = new Playground(this.atlasData, this.soundManager);
     this.collisions = new Collisions(this.soundManager);
-    this.controller = new Controller(this.playground.hero);
+    this.controller = new Controller(this.playground.hero, this.keysSwitcher);
     this.soundManager.init();
     this.soundManager.playBgMusic();
     this.background = new Background(this.app);
@@ -71,7 +85,7 @@ export class Game {
     this.startScreen.destroy();
     this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
-  }
+  };
 
   private update(): void {
     const prevPoint = {
