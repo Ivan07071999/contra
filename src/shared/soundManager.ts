@@ -21,8 +21,7 @@ export class SoundManager {
       WEAPON_UP: 'weaponUp',
     };
     this.toggleVolume('mute');
-
-    //this.init();
+    this.init();
   }
 
   public init(): void {

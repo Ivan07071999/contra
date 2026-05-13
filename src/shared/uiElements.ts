@@ -68,9 +68,7 @@ export class UIElements {
       align: 'center',
     });
 
-    const background = new Graphics()
-      .roundRect(0, 0, 200, 50, 5)
-      .fill(0xffffff);
+    const background = new Graphics().roundRect(0, 0, 200, 50, 5).fill(0xffffff);
 
     const input = new Input({
       bg: background,
@@ -92,7 +90,7 @@ export class UIElements {
     const keyDescription = document.createElement('small');
     wrapper.className = 'description';
     keyView.className = 'key';
-    keyDescription.className = 'keyDescription'
+    keyDescription.className = 'keyDescription';
 
     keyView.textContent = key;
     keyDescription.textContent = description.toUpperCase();
@@ -124,5 +122,16 @@ export class UIElements {
     if (button.firstChild instanceof HTMLImageElement) {
       button.firstChild.src = state === 'play' ? playImg : muteImg;
     }
+  }
+
+  public createMenuButton(callback: () => void): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.className = 'menu';
+    button.textContent = 'MENU';
+    button.addEventListener('click', () => {
+      callback();
+    })
+
+    return button;
   }
 }

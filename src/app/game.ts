@@ -16,15 +16,15 @@ export class Game {
   private app: Application;
   private startScreen: StartScreen;
   declare private atlasData: ISpriteAtlas;
-  declare private background: Background;
-  declare private playground: Playground;
-  declare private collisions: Collisions;
-  declare private controller: Controller;
+  declare private background: Background | null;
+  declare private playground: Playground | null;
+  declare private collisions: Collisions | null;
+  declare private controller: Controller | null;
   declare private soundManager: SoundManager;
   declare private keysSwitcher: KeysSwitcher;
-  private UIElements: UIElements
+  private UIElements: UIElements;
   private options: Options;
-  private panel: Panel;
+  declare private panel: Panel;
 
   constructor(atlasData: ISpriteAtlas) {
     this.atlasData = atlasData;
@@ -34,13 +34,7 @@ export class Game {
     this.startScreen = new StartScreen(this.UIElements, this.startGame, this.openOptions);
     this.keysSwitcher = new KeysSwitcher();
     this.options = new Options(this.keysSwitcher, this.UIElements, this.openStartScreen);
-    this.panel = new Panel(this.keysSwitcher, this.UIElements, this.soundManager);
-    // this.soundManager = SoundManager.getInstance();
-    // this.playground = new Playground(this.atlasData, this.soundManager);
-    // this.collisions = new Collisions(this.soundManager);
-    // this.controller = new Controller(this.playground.hero);
-    // this.soundManager.init();
-    // this.soundManager.playBgMusic();
+    this.panel = new Panel(this.keysSwitcher, this.UIElements, this.soundManager, this.backToMenu);
   }
 
   public async init(): Promise<void> {
@@ -56,15 +50,10 @@ export class Game {
     const container = document.querySelector('#app');
     container?.appendChild(this.app.canvas);
     //this.openStartScreen();
-    this.openOptions();
-    //this.background = new Background(this.app);
-
-    //this.app.stage.addChild(this.background.view, this.playground.view);
-    //this.startLoop();
+    this.startGame();
   }
 
   private openOptions = (): void => {
-    console.log('OPEN OPTIONS');
     this.startScreen.removeFromParent();
     this.app.stage.addChild(this.options);
     this.options.createInputs();
@@ -73,24 +62,31 @@ export class Game {
   private openStartScreen = (): void => {
     this.app.stage.removeChildren();
     this.app.stage.addChild(this.startScreen);
-  }
+  };
+
+  private backToMenu = (): void => {
+    this.soundManager.stopBgMusic();
+    this.stopLoop();
+    this.openStartScreen();
+    this.playground = null;
+    this.collisions = null;
+    this.controller = null;
+    this.background = null;
+  };
 
   private startGame = (): void => {
-    //this.soundManager = SoundManager.getInstance();
-    //this.keysSwitcher = new KeysSwitcher();
     this.playground = new Playground(this.atlasData, this.soundManager);
     this.collisions = new Collisions(this.soundManager);
     this.controller = new Controller(this.playground.hero, this.keysSwitcher);
-    this.soundManager.init();
     this.soundManager.playBgMusic();
     this.background = new Background(this.app);
     this.app.stage.removeChild(this.startScreen);
-    this.startScreen.destroy();
     this.app.stage.addChild(this.background.view, this.playground.view);
     this.startLoop();
   };
 
   private update(): void {
+    if (!this.playground || !this.collisions) return;
     const prevPoint = {
       x: this.playground.hero.x,
       y: this.playground.hero.y,
@@ -150,6 +146,7 @@ export class Game {
   }
 
   private updateCamera(): void {
+    if (!this.playground || !this.collisions || !this.background) return;
     const heroPosition = -this.playground.hero.x + 200;
 
     if (this.playground.hero.x >= this.playground.boss.x - this.playground.boss.width * 1.35) {
@@ -162,13 +159,22 @@ export class Game {
 
     this.playground.position = heroPosition;
     this.background.position = heroPosition;
+    this.playground.HPPosition = -heroPosition;
   }
 
+  private gameLoopTicker = () => {
+    if (!this.controller) return;
+    this.controller.update();
+    this.update();
+    this.updateCamera();
+  };
+
   private startLoop(): void {
-    this.app.ticker.add(() => {
-      this.controller.update();
-      this.update();
-      this.updateCamera();
-    });
+    this.app.ticker.remove(this.gameLoopTicker);
+    this.app.ticker.add(this.gameLoopTicker);
+  }
+
+  private stopLoop(): void {
+    this.app.ticker.remove(this.gameLoopTicker);
   }
 }

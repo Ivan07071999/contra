@@ -264,7 +264,6 @@ export class Hero extends Container {
   }
 
   public fire(): void {
-    //console.log(this.isDead, this.swimmingFire);
     if (this.isDead || !this.swimmingFire) return;
     this.isShooting = true;
 

@@ -15,6 +15,7 @@ import { Boss } from '../entities/boss';
 import { WeaponBooster } from '../shared/weaponBooster';
 import { EndGame } from '../shared/endGame';
 import { SoundManager } from '../shared/soundManager';
+import { HealthPoint } from '../shared/medal';
 
 export class Playground {
   public view: Container;
@@ -42,6 +43,7 @@ export class Playground {
   private atlasData: ISpriteAtlas;
   declare public weaponBooster: WeaponBooster;
   private soundManager: SoundManager;
+  private healthPoint: HealthPoint;
 
   constructor(atlasData: ISpriteAtlas, soundManager: SoundManager) {
     this.view = new Container();
@@ -51,6 +53,7 @@ export class Playground {
     this.water = new Container();
     this.bulletFactory = new BulletFactory(this.view, this.bullets);
     this.hero = new Hero(atlasData, this.bulletFactory, this.soundManager);
+    this.healthPoint = new HealthPoint();
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData, this.soundManager);
     this.bridgesPosition = {
@@ -74,7 +77,13 @@ export class Playground {
     this.addTourellies();
     this.addBoss();
     this.addWeaponBoosters();
+    this.createHPView();
     //this.soundManager.playBgMusic();
+  }
+
+  private createHPView(): void {
+    this.healthPoint.createHealthPoint(this.hero.HP);
+    this.view.addChild(this.healthPoint);
   }
 
   private resetPlayground(): void {
@@ -118,6 +127,7 @@ export class Playground {
     this.position = 0;
     this.hero.x = 200;
     this.hero.y = 100;
+    this.healthPoint.createHealthPoint(this.hero.HP);
   }
 
   private addWeaponBoosters(): void {
@@ -233,16 +243,18 @@ export class Playground {
       setTimeout(() => {
         this.view.x = heroPosition;
         this.hero.respawnHero(heroPosition);
+        // this.healthPoint.createHealthPoint(this.hero.HP);
+        this.healthPoint.createHealthPoint(this.hero.HP);
       }, 1000);
     }
 
-    for (let i = 0; i < this.weaponBoosters.length; i +=1) {
+    for (let i = 0; i < this.weaponBoosters.length; i += 1) {
       this.weaponBoosters[i].update();
       if (this.hero.x === this.weaponBoosters[i].x) this.weaponBoosters[i].startLoop = true;
       if (this.weaponBoosters[i].y > this.view.height || this.weaponBoosters[i].x > this.boss.x) {
         this.weaponBoosters[i].removeFromParent();
         this.weaponBoosters.splice(i, 1);
-      };
+      }
     }
 
     this.boss.update();
@@ -302,5 +314,9 @@ export class Playground {
 
   public set position(value: number) {
     this.view.x = value;
+  }
+
+  public set HPPosition(value: number) {
+    this.healthPoint.x = value;
   }
 }

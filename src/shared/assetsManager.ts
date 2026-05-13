@@ -17,6 +17,7 @@ export class AssetsManager {
     await Assets.load([
       { alias: 'startScreen', src: '/startScreen.jpg' },
       { alias: 'arrowBack', src: '/arrowBack.png' },
+      { alias: 'medal', src : '/medal.png' },
     ]);
 
     this.initialized = true;

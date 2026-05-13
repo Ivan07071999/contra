@@ -4,20 +4,40 @@ body {
   display: grid;
   place-items: center;
   background-color: #333;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .panelWrapper {
   display: flex;
   width: 800;
-  justify-content: space-around;
+  justify-content: space-between;
+  align-items: start;
+  padding-top: 10px;
   color: rgb(194, 195, 197);
-  padding: 10px;
+}
+
+.keyWrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 125px);
+  grid-template-rows: repeat(2, 16px);
 }
 
 .description {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  border: 1px solid white;
+  padding: 0px 2px 0px 2px;
   gap: 5px;
+}
+
+.keyDescription {
+  width: 42px;
 }
 
 .keyDescription::after {
@@ -31,9 +51,10 @@ body {
 .audioWrapper {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
-.audio {
+button {
   background-color: #333;
   cursor: pointer;
   border: none;
@@ -42,6 +63,12 @@ body {
   &:hover {
     background-color: rgb(43, 41, 41);
   }
+}
+
+.menu {
+  padding: 10px;
+  border: 1px solid rgb(43, 41, 41);
+  color: rgb(194, 195, 197);
 }
 
 .backgroundImg {
@@ -54,4 +81,9 @@ body {
   height: 7px;
   background: 'red';
   cursor: pointer;
+}
+
+strong {
+  margin-left: auto;
+  padding: 0px 10px;
 }
