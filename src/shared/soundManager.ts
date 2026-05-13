@@ -4,7 +4,6 @@ import type { ISound } from "./types";
 export class SoundManager {
   private static instance: SoundManager | undefined;
   private isMusicPlaying = false;
-  declare public ctx: AudioContext;
   public soundKeys: Readonly<ISound>;
   public volumeState: 'mute' | 'play' = 'play';
   public volume = 0.5;
@@ -26,32 +25,21 @@ export class SoundManager {
     //this.init();
   }
 
-  public initAudioContext(): void {
-    console.log('init context');
-    try {
-      this.ctx = new AudioContext();
-      this.init()
-      console.log(this.ctx);
-    } catch (err) {
-      console.log('ERROR audio ctx', err);
-    }
-  }
-
   public init(): void {
     sound.add(this.soundKeys.BG, {
       url: '/Rick_Astley_-_Never_Gonna_Give_You_Up_8-Bit_Cover_(SkySound.cc).mp3',
       loop: true,
-      volume: 0,
+      volume: 0.1,
     });
 
-    sound.add(this.soundKeys.FIRE, { url: '/contra-sfx-10.mp3', volume: 0 });
-    sound.add(this.soundKeys.GAME_OVER, { url: '/game-over.mp3', volume: 0 });
-    sound.add(this.soundKeys.KILL, { url: '/contra-sfx-18.mp3', volume: 0 });
-    sound.add(this.soundKeys.VICTORY, { url: '/victory.mp3', volume: 0 });
-    sound.add(this.soundKeys.STAY, { url: '/contra-sfx-19.mp3', volume: 0 });
-    sound.add(this.soundKeys.EXPLOSION, { url: '/contra-sfx-9.mp3', volume: 0 });
-    sound.add(this.soundKeys.BULLET_BOUNDS, { url: '/contra-sfx-15.mp3', volume: 0 });
-    sound.add(this.soundKeys.WEAPON_UP, { url: '/contra-sfx-27.mp3', volume: 0 });
+    sound.add(this.soundKeys.FIRE, { url: '/contra-sfx-10.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.GAME_OVER, { url: '/game-over.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.KILL, { url: '/contra-sfx-18.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.VICTORY, { url: '/victory.mp3', volume: 0.1 });
+    sound.add(this.soundKeys.STAY, { url: '/contra-sfx-19.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.EXPLOSION, { url: '/contra-sfx-9.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.BULLET_BOUNDS, { url: '/contra-sfx-15.mp3', volume: 0.2 });
+    sound.add(this.soundKeys.WEAPON_UP, { url: '/contra-sfx-27.mp3', volume: 0.3 });
   }
 
   public static getInstance(): SoundManager {
