@@ -1,5 +1,7 @@
 import { ButtonContainer, Input } from "@pixi/ui";
 import { Container, TextStyle, Text, Texture, Sprite, Graphics } from "pixi.js";
+import playImg from '../../public/volume_up.png';
+import muteImg from '../../public/volume_off.png';
 
 export class UIElements {
   declare public buttonStart: ButtonContainer;
@@ -87,12 +89,40 @@ export class UIElements {
   public createKeyItemView(description: string, key: string): HTMLDivElement {
     const wrapper = document.createElement('div');
     const keyView = document.createElement('small');
-    const keyDescription = document.createElement('strong');
+    const keyDescription = document.createElement('small');
+    wrapper.className = 'description';
+    keyView.className = 'key';
+    keyDescription.className = 'keyDescription'
 
     keyView.textContent = key;
-    keyDescription.textContent = description;
+    keyDescription.textContent = description.toUpperCase();
     wrapper.append(keyDescription, keyView);
 
     return wrapper;
+  }
+
+  public createAudioElement(): HTMLButtonElement {
+    const buttonAudio = document.createElement('button');
+    buttonAudio.className = 'audio';
+    const img = document.createElement('img');
+    img.className = 'backgroundImg';
+    img.src = muteImg;
+    buttonAudio.appendChild(img);
+
+    return buttonAudio;
+  }
+
+  public createRangeInput(): HTMLInputElement {
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.value = '0';
+    input.className = 'rangeInp';
+    return input;
+  }
+
+  public setImg(button: HTMLButtonElement, state: string): void {
+    if (button.firstChild instanceof HTMLImageElement) {
+      button.firstChild.src = state === 'play' ? playImg : muteImg;
+    }
   }
 }

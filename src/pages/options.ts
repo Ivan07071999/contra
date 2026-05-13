@@ -25,9 +25,7 @@ export class Options extends Container {
 
     this.createOptionWrapper();
     this.createInputsContainer();
-
     this.createBackButton();
-    //this.createInputs();
     this.createSaveButton();
   }
 
@@ -84,8 +82,9 @@ export class Options extends Container {
     this.inputs = [];
     const controller = this.keysSwitcher.keys;
 
-    Object.entries(controller).forEach((item, ind) => {
-      const input = this.createInputItem(item[1], item[0]);
+    Object.entries(controller).forEach(([key, value], ind) => {
+      if (!value) return;
+      const input = this.createInputItem(value, key);
       input.y = ind * 60;
       this.inputsContainer.addChild(input);
       const currInp = input.children[1] as Input;
@@ -121,7 +120,6 @@ export class Options extends Container {
       this.inputs.push(currInp);
     });
     console.log(this.inputs.length);
-
   }
 
   private createNotifications(): void {
@@ -146,8 +144,8 @@ export class Options extends Container {
     this.addChild(myText);
   }
 
-  private createNewController(): Record<string, keyof IKeys> | undefined {
-    const newController: Record<string, keyof IKeys> = {};
+  private createNewController(): Partial<Record<string, keyof IKeys>> | undefined {
+    const newController: Partial<Record<string, keyof IKeys>> = {};
     const values = Object.values(this.keysSwitcher.keys);
     this.inputs.forEach((item, ind) => {
       const codeValue = item.value;
@@ -158,9 +156,20 @@ export class Options extends Container {
     if (Object.hasOwn(newController, '')) {
       this.createNotifications();
       return;
-    };
+    }
 
     return newController;
+  }
+
+  private updatePanel(keys: Partial<Record<string, keyof IKeys>>): void {
+    const currentKeys = document.querySelectorAll('.key');
+    console.log(currentKeys[0].textContent);
+    let i = 0;
+
+    for (const key in keys) {
+      currentKeys[i].textContent = key;
+      i += 1;
+    }
   }
 
   private saveOptions = (): void => {
@@ -168,6 +177,7 @@ export class Options extends Container {
     if (!controller) return;
 
     this.keysSwitcher.keys = controller;
+    this.updatePanel(controller);
     this.openStartScreen();
   };
 

@@ -1,8 +1,8 @@
 import type { IKeys } from "./types";
 
 export class KeysSwitcher {
-  public lsKey: string;;
-  declare public keysController: Record<string, keyof IKeys>
+  public lsKey: string;
+  declare public keysController: Partial<Record<string, keyof IKeys>>;
 
   constructor() {
     this.lsKey = 'keysController';
@@ -13,7 +13,7 @@ export class KeysSwitcher {
     const lsKeys = this.getKeysFromLocalStorage();
 
     if (lsKeys !== null && typeof lsKeys === 'object') {
-      this.keys = lsKeys as Record<string, keyof IKeys>;
+      this.keys = lsKeys as Partial<Record<string, keyof IKeys>>;
     } else {
       this.keys = {
         ArrowUp: 'up',
@@ -22,7 +22,7 @@ export class KeysSwitcher {
         ArrowDown: 'down',
         KeyA: 'fire',
         KeyS: 'jump',
-      };;
+      };
       this.setKeysToLocalStorage(this.keysController);
     }
   }
@@ -35,16 +35,16 @@ export class KeysSwitcher {
     return response;
   }
 
-  private setKeysToLocalStorage(keys: Record<string, keyof IKeys>): void {
+  private setKeysToLocalStorage(keys: Partial<Record<string, keyof IKeys>>): void {
     const keysToJSON = JSON.stringify(keys);
     localStorage.setItem(this.lsKey, keysToJSON);
   }
 
-  public get keys(): Record<string, keyof IKeys> {
+  public get keys(): Partial<Record<string, keyof IKeys>> {
     return this.keysController;
   }
 
-  set keys(newKeys: Record<string, keyof IKeys>) {
+  set keys(newKeys: Partial<Record<string, keyof IKeys>>) {
     this.keysController = newKeys;
     this.setKeysToLocalStorage(newKeys);
   }

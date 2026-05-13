@@ -6,3 +6,52 @@ body {
   background-color: #333;
 }
 
+.panelWrapper {
+  display: flex;
+  width: 800;
+  justify-content: space-around;
+  color: rgb(194, 195, 197);
+  padding: 10px;
+}
+
+.description {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.keyDescription::after {
+  content: ":";
+}
+
+.key {
+  width: 100;
+}
+
+.audioWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.audio {
+  background-color: #333;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: rgb(43, 41, 41);
+  }
+}
+
+.backgroundImg {
+  width: 24px;
+  height: 24px;
+}
+
+.rangeInp {
+  width: 70px;
+  height: 7px;
+  background: 'red';
+  cursor: pointer;
+}

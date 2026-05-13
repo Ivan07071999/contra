@@ -28,16 +28,19 @@ export class Game {
 
   constructor(atlasData: ISpriteAtlas) {
     this.atlasData = atlasData;
+    this.soundManager = SoundManager.getInstance();
     this.UIElements = new UIElements();
     this.app = new Application();
     this.startScreen = new StartScreen(this.UIElements, this.startGame, this.openOptions);
     this.keysSwitcher = new KeysSwitcher();
     this.options = new Options(this.keysSwitcher, this.UIElements, this.openStartScreen);
-    this.panel = new Panel(this.keysSwitcher, this.UIElements);
+    this.panel = new Panel(this.keysSwitcher, this.UIElements, this.soundManager);
     // this.soundManager = SoundManager.getInstance();
     // this.playground = new Playground(this.atlasData, this.soundManager);
     // this.collisions = new Collisions(this.soundManager);
     // this.controller = new Controller(this.playground.hero);
+    // this.soundManager.init();
+    // this.soundManager.playBgMusic();
   }
 
   public async init(): Promise<void> {
@@ -73,7 +76,7 @@ export class Game {
   }
 
   private startGame = (): void => {
-    this.soundManager = SoundManager.getInstance();
+    //this.soundManager = SoundManager.getInstance();
     //this.keysSwitcher = new KeysSwitcher();
     this.playground = new Playground(this.atlasData, this.soundManager);
     this.collisions = new Collisions(this.soundManager);

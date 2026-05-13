@@ -5,6 +5,8 @@ export class SoundManager {
   private static instance: SoundManager | undefined;
   private isMusicPlaying = false;
   public soundKeys: Readonly<ISound>;
+  public volumeState: 'mute' | 'play' = 'play';
+  public volume = 0.5;
 
   constructor() {
     this.soundKeys = {
@@ -18,6 +20,7 @@ export class SoundManager {
       BULLET_BOUNDS: 'bulletBounds',
       WEAPON_UP: 'weaponUp',
     };
+    this.toggleVolume('mute');
 
     //this.init();
   }
@@ -45,6 +48,7 @@ export class SoundManager {
   }
 
   public playSound(key: string): void {
+
     void sound.play(key);
   }
 
@@ -58,5 +62,21 @@ export class SoundManager {
   public stopBgMusic(): void {
     sound.stop(this.soundKeys.BG);
     this.isMusicPlaying = false;
+  }
+
+  public toggleVolume(state: string): void {
+    if (state === 'play') {
+      sound.volumeAll = this.volume;
+      this.volumeState = 'play'
+    } else {
+      sound.volumeAll = 0;
+      //this.volume = 0;
+      this.volumeState = 'mute';
+    }
+  }
+
+  public setVolume(value: number): void {
+    this.volume = value * 0.01;
+    sound.volumeAll = this.volume;
   }
 }

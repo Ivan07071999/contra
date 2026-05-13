@@ -31,11 +31,15 @@ export class Controller {
   private handleKeyDown(event: KeyboardEvent): void {
     const key = this.keysSwitcher.keys[event.code];
 
+    if (!key) return;
+
     this.keys[key].pressed = true;
   }
 
   private handleKeyUp(event: KeyboardEvent): void {
     const key = this.keysSwitcher.keys[event.code];
+
+    if (!key) return;
 
     this.keys[key].pressed = false;
   }
