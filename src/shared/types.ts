@@ -12,10 +12,22 @@ export interface IMountain {
   count: number;
 }
 
+export interface IEnemy {
+  x: number;
+  y: number;
+}
+
+export interface IBooster {
+  x: number;
+  y: number;
+}
+
 export interface ILevelData {
   data: IPlatform[];
   mountains: IMountain[];
   boxes: IPlatform[];
+  enemies: IEnemy[];
+  weaponBoosters: IBooster
 }
 
 interface IRect {

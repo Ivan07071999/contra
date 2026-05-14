@@ -1,5 +1,4 @@
-
-import { Container, Texture, TilingSprite } from 'pixi.js';
+import { Container } from 'pixi.js';
 import platforms from '../../src/shared/platforms.json';
 import { Platform } from '../shared/platform';
 import { Box } from '../shared/box';
@@ -16,6 +15,8 @@ import { WeaponBooster } from '../shared/weaponBooster';
 import { EndGame } from '../shared/endGame';
 import { SoundManager } from '../shared/soundManager';
 import { HealthPoint } from '../shared/medal';
+import { TextureGenerator } from '../features/textureGenerator';
+import { PlaygroundUpdate } from '../features/playgroundUpdate';
 
 export class Playground {
   public view: Container;
@@ -25,9 +26,9 @@ export class Playground {
   public boxes: Box[] = [];
   public bridges: Bridge[] = [];
   public secondBridges: Bridge[] = [];
-  private bridgesPosition: {
-    first: { position: number; hasExploded: boolean };
-    second: { position: number; hasExploded: boolean };
+  private bridgesPosition = {
+    first: { position: 1620, hasExploded: false },
+    second: { position: 2260, hasExploded: false },
   };
   public hasExploded = false;
   private playgroundAnimations: PlaygroundAnimations;
@@ -44,6 +45,8 @@ export class Playground {
   declare public weaponBooster: WeaponBooster;
   private soundManager: SoundManager;
   private healthPoint: HealthPoint;
+  private textureGenerator: TextureGenerator;
+  private playgroundUpdate : PlaygroundUpdate;
 
   constructor(atlasData: ISpriteAtlas, soundManager: SoundManager) {
     this.view = new Container();
@@ -56,10 +59,8 @@ export class Playground {
     this.healthPoint = new HealthPoint();
     this.secondBridgeContainer = new Container();
     this.playgroundAnimations = new PlaygroundAnimations(atlasData, this.soundManager);
-    this.bridgesPosition = {
-      first: { position: 1620, hasExploded: false },
-      second: { position: 2260, hasExploded: false },
-    };
+    this.textureGenerator = new TextureGenerator();
+    this.playgroundUpdate = new PlaygroundUpdate();
 
     this.hero.x = 200;
     this.hero.y = 100;
@@ -68,25 +69,19 @@ export class Playground {
 
     this.view.addChild(this.hero);
 
-    this.createPlatforms();
-    this.addWater();
-    this.createBridge();
-    this.createBoxes();
-    this.update();
-    this.addEnemies(this.atlasData);
-    this.addTourellies();
-    this.addBoss();
-    this.addWeaponBoosters();
+    this.textureGenerator.createPlatforms(this.view, this.platforms, platforms.data);
+    this.textureGenerator.addWater(this.view, this.water);
+    this.addBridges();
+    this.textureGenerator.createBoxes(this.view, this.boxes, platforms.boxes);
+    this.textureGenerator.addEnemies(this.atlasData, this.view, this.enemies, platforms.enemies, this.soundManager );
+    this.textureGenerator.addTourellies(this.view, this.bulletFactory, this.hero, this.tourellies, platforms.tourelles, this.playgroundAnimations);
+    this.textureGenerator.addBoss(this.view, this.boss);
+    this.textureGenerator.addWeaponBoosters(this.view, this.weaponBoosters, platforms.weaponBoosters);
     this.createHPView();
-    //this.soundManager.playBgMusic();
+    this.update();
   }
 
-  private createHPView(): void {
-    this.healthPoint.createHealthPoint(this.hero.HP);
-    this.view.addChild(this.healthPoint);
-  }
-
-  private resetPlayground(): void {
+  private resetPlayground = (): void => {
     this.enemies.forEach((enemy) => {
       enemy.removeFromParent();
       enemy.destroy();
@@ -117,11 +112,11 @@ export class Playground {
     this.boss.destroy();
     this.boss = new Boss(this.atlasData, this.bulletFactory, this.soundManager);
 
-    this.addEnemies(this.atlasData);
-    this.addTourellies();
-    this.addWeaponBoosters();
-    this.createBridge();
-    this.addBoss();
+    this.textureGenerator.addEnemies(this.atlasData, this.view, this.enemies, platforms.enemies, this.soundManager );
+    this.textureGenerator.addTourellies(this.view, this.bulletFactory, this.hero, this.tourellies, platforms.tourelles, this.playgroundAnimations);
+    this.textureGenerator.addWeaponBoosters(this.view, this.weaponBoosters, platforms.weaponBoosters);
+    this.addBridges();
+    this.textureGenerator.addBoss(this.view, this.boss);
 
     this.hero.HP = 3;
     this.position = 0;
@@ -130,88 +125,14 @@ export class Playground {
     this.healthPoint.createHealthPoint(this.hero.HP);
   }
 
-  private addWeaponBoosters(): void {
-    for (const booster of platforms.weaponBoosters) {
-      const item = new WeaponBooster(booster.x, booster.y);
-      this.weaponBoosters.push(item);
-      this.view.addChild(item);
-    }
+  private addBridges(): void {
+    this.textureGenerator.createBridge(this.view, this.bridgeContainer, this.bridges, platforms.bridge, this.playgroundAnimations, this.bridgesPosition.first.position);
+    this.textureGenerator.createBridge(this.view, this.secondBridgeContainer, this.secondBridges, platforms.bridge, this.playgroundAnimations, this.bridgesPosition.second.position);
   }
 
-  private addBoss(): void {
-    this.view.addChild(this.boss);
-  }
-
-  private addTourellies(): void {
-    for (const tourele of platforms.tourelles) {
-      const item = new Tourelle(
-        this.bulletFactory,
-        this.hero,
-        tourele.x,
-        tourele.y,
-        this.playgroundAnimations,
-      );
-      this.tourellies.push(item);
-      this.view.addChild(item);
-    }
-  }
-
-  private addEnemies(atlasData: ISpriteAtlas): void {
-    for (const enemy of platforms.enemies) {
-      const item = new Enemy(atlasData, this.soundManager, enemy.x, enemy.y);
-      this.view.addChild(item);
-      this.enemies.push(item);
-    }
-  }
-
-  private createPlatforms(): void {
-    for (const platform of platforms.data) {
-      const item = new Platform(platform.x, platform.y, platform.width, platform.height);
-      this.view.addChild(item);
-      this.platforms.push(item);
-    }
-  }
-
-  private createBoxes(): void {
-    for (const box of platforms.boxes) {
-      const item = new Box(box.x, box.y, box.width, box.height);
-      this.view.addChild(item);
-      this.boxes.push(item);
-    }
-  }
-
-  private addWater(): void {
-    const texture = Texture.from('water0000');
-    texture.frame.width -= 1;
-
-    const tilingSprite = new TilingSprite({
-      texture: texture,
-      width: 3550,
-      height: texture.height,
-    });
-
-    tilingSprite.y = 600 - texture.height;
-    this.water.zIndex = 1;
-
-    this.water.addChild(tilingSprite);
-    this.view.addChild(this.water);
-  }
-
-  private createBridge(): void {
-    for (const segment of platforms.bridge) {
-      const item = new Bridge(segment.x, segment.y, this.playgroundAnimations);
-      this.bridgeContainer.addChild(item);
-      this.bridges.push(item);
-
-      const item2 = new Bridge(segment.x, segment.y, this.playgroundAnimations);
-      this.secondBridgeContainer.addChild(item2);
-      this.secondBridges.push(item2);
-    }
-
-    this.bridgeContainer.x = this.bridgesPosition.first.position;
-    this.secondBridgeContainer.x = this.bridgesPosition.second.position;
-
-    this.view.addChild(this.bridgeContainer, this.secondBridgeContainer);
+  private createHPView(): void {
+    this.healthPoint.createHealthPoint(this.hero.HP);
+    this.view.addChild(this.healthPoint);
   }
 
   private checkBullet(bullet: Bullet, index: number) {
@@ -222,51 +143,13 @@ export class Playground {
   }
 
   public update(): void {
-    if (this.hero.x < -this.view.x) this.hero.x = -this.view.x;
-    if (this.hero.x >= this.boss.x) this.hero.x = this.boss.x;
-
-    if (this.hero.isDead) {
-      if (this.hero.HP === 0) {
-        this.endGame.x = -this.position + (800 - this.endGame.width) / 2;
-        this.view.addChild(this.endGame.gameOver());
-
-        setTimeout(() => {
-          this.view.removeChild(this.endGame.gameOver());
-          this.resetPlayground();
-          this.hero.respawnHero(200);
-        }, 3000);
-
-        return;
-      }
-      const heroPosition = -this.position + 200;
-
-      setTimeout(() => {
-        this.view.x = heroPosition;
-        this.hero.respawnHero(heroPosition);
-        // this.healthPoint.createHealthPoint(this.hero.HP);
-        this.healthPoint.createHealthPoint(this.hero.HP);
-      }, 1000);
-    }
-
-    for (let i = 0; i < this.weaponBoosters.length; i += 1) {
-      this.weaponBoosters[i].update();
-      if (this.hero.x === this.weaponBoosters[i].x) this.weaponBoosters[i].startLoop = true;
-      if (this.weaponBoosters[i].y > this.view.height || this.weaponBoosters[i].x > this.boss.x) {
-        this.weaponBoosters[i].removeFromParent();
-        this.weaponBoosters.splice(i, 1);
-      }
-    }
-
+    this.playgroundUpdate.limitHeroPosition(this.hero, this.view.x, this.boss.x);
+    this.playgroundUpdate.checkHeroDead(this.hero, this.view, this.endGame, this.view.x, this.healthPoint, this.resetPlayground);
+    this.playgroundUpdate.updateWeaponBooster(this.weaponBoosters, this.hero, this.boss.x, this.view.height);
+    this.playgroundUpdate.blowUpBridge(this.hero, this.bridges, this.bridgesPosition.first);
+    this.playgroundUpdate.blowUpBridge(this.hero, this.secondBridges, this.bridgesPosition.second);
+    this.playgroundUpdate.checkEndGame(this.view, this.boss.bossDoor.HP, this.endGame, this.tourellies);
     this.boss.update();
-
-    if (this.boss.bossDoor.HP === 0) {
-      this.endGame.x = -this.position + 100;
-      this.tourellies.forEach((tourele) => {
-        tourele.HP = 0;
-      });
-
-      this.view.addChild(this.endGame.endGame());
-    }
 
     for (const enemy of this.enemies) {
       if (Math.abs(this.hero.x - enemy.x) <= 800) enemy.update();
@@ -279,32 +162,6 @@ export class Playground {
     for (let i = 0; i < this.bullets.length; i += 1) {
       this.bullets[i].update();
       this.checkBullet(this.bullets[i], i);
-    }
-
-    if (
-      !this.bridgesPosition.first.hasExploded &&
-      this.hero.x >= this.bridgesPosition.first.position
-    ) {
-      this.bridges.forEach((segment, interval) => {
-        setTimeout(() => {
-          segment.blowUpSegment();
-        }, interval * 500);
-      });
-
-      this.bridgesPosition.first.hasExploded = true;
-    }
-
-    if (
-      !this.bridgesPosition.second.hasExploded &&
-      this.hero.x >= this.bridgesPosition.second.position
-    ) {
-      this.secondBridges.forEach((segment, interval) => {
-        setTimeout(() => {
-          segment.blowUpSegment();
-        }, interval * 500);
-      });
-
-      this.bridgesPosition.second.hasExploded = true;
     }
   }
 
